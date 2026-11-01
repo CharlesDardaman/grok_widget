@@ -1,0 +1,113 @@
+name: GrokWidget
+options:
+  bundleIdPrefix: com.charlesdardaman
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  developmentLanguage: en
+configs:
+  Debug: debug
+  Release: release
+configFiles:
+  Debug: Config/Signing.xcconfig
+  Release: Config/Signing.xcconfig
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    CODE_SIGN_STYLE: Automatic
+    DEVELOPMENT_TEAM: $(DEVELOPMENT_TEAM)
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_DEFAULT_ACTOR_ISOLATION: nonisolated
+    ENABLE_USER_SCRIPT_SANDBOXING: YES
+targets:
+  GrokWidget:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/GrokWidgetApp
+        excludes:
+          - "*.entitlements"
+      - path: Sources/GrokUsageKit
+      - path: Sources/GrokUsageUI
+    dependencies:
+      - target: GrokUsageWidget
+        embed: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.charlesdardaman.grok-widget
+        PRODUCT_NAME: GrokWidget
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: Config/InfoAdditions.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/GrokWidgetApp/GrokWidget.entitlements
+        INFOPLIST_KEY_CFBundleDisplayName: Grok Widget
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
+        ENABLE_HARDENED_RUNTIME: YES
+  GrokUsageWidget:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Sources/GrokUsageWidget
+        excludes:
+          - Info.plist
+          - "*.entitlements"
+      - path: Sources/GrokUsageKit
+      - path: Sources/GrokUsageUI
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.charlesdardaman.grok-widget.widget
+        PRODUCT_NAME: GrokUsageWidget
+        GENERATE_INFOPLIST_FILE: NO
+        INFOPLIST_FILE: Sources/GrokUsageWidget/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/GrokUsageWidget/GrokUsageWidget.entitlements
+        APPLICATION_EXTENSION_API_ONLY: YES
+        SKIP_INSTALL: YES
+  grok-usage-dump:
+    type: tool
+    platform: macOS
+    sources:
+      - path: Sources/grok-usage-dump
+        excludes:
+          - "*.entitlements"
+      - path: Sources/GrokUsageKit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.charlesdardaman.grok-widget.dump
+        PRODUCT_NAME: grok-usage-dump
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_FILE: Config/InfoAdditions.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/grok-usage-dump/grok-usage-dump.entitlements
+        CREATE_INFOPLIST_SECTION_IN_BINARY: YES
+  GrokUsageKitTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Sources/GrokUsageKit
+      - path: Sources/GrokUsageUI
+      - path: Tests/GrokUsageKitTests
+        excludes:
+          - Fixtures/**
+      - path: Tests/GrokUsageKitTests/Fixtures
+        buildPhase: resources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.charlesdardaman.grok-widget.tests
+        GENERATE_INFOPLIST_FILE: YES
+        TEST_HOST: ""
+        BUNDLE_LOADER: "$(TEST_HOST)"
+schemes:
+  GrokWidget:
+    build:
+      targets:
+        GrokWidget: all
+        GrokUsageWidget: all
+        grok-usage-dump: all
+        GrokUsageKitTests: [test]
+    run:
+      config: Debug
+    test:
+      config: Debug
+      targets:
+        - GrokUsageKitTests
