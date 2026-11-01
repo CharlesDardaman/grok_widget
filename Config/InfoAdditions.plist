@@ -4,5 +4,16 @@
 <dict>
 	<key>GrokKeychainAccessGroup</key>
 	<string>$(GROK_KEYCHAIN_ACCESS_GROUP)</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.charlesdardaman.grok-widget</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>grokwidget</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>

@@ -68,6 +68,7 @@ struct GrokUsageWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: SharedStorage.widgetKind, provider: UsageTimelineProvider()) { entry in
             UsageWidgetView(entry: entry)
+                .widgetURL(entry.presentation == .sessionExpired ? AppLink.signIn : nil)
                 .containerBackground(Color(nsColor: .windowBackgroundColor), for: .widget)
         }
         .configurationDisplayName("Grok Usage")

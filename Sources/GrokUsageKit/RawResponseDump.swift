@@ -159,7 +159,7 @@ struct DumpCommand {
             return 1
         }
         guard let cookie, !CookieHeader.normalize(cookie).isEmpty else {
-            writeOutput("No session cookie in the Keychain. Open Grok Widget and paste the Cookie header.")
+            writeOutput("No session cookie in the Keychain. Open Grok Widget and sign in to grok.com.")
             return 2
         }
 

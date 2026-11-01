@@ -108,7 +108,7 @@ final class MappingTests: XCTestCase {
         let text = UsageFetchError.redact("failed for \(cookie)", cookie: cookie)
         XCTAssertFalse(text.contains("super-secret"))
         XCTAssertTrue(text.contains("[redacted]"))
-        XCTAssertTrue(UsageFetchError.sessionExpired.localizedDescription.contains("Re-paste"))
+        XCTAssertTrue(UsageFetchError.sessionExpired.localizedDescription.contains("Sign in again"))
         XCTAssertFalse(UsageFetchError.sessionExpired.localizedDescription.contains(cookie))
     }
 }

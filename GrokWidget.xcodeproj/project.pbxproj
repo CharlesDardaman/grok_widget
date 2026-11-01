@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0091248591B64C4673886E27 /* CookieHarvest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C16996EB5E01B8C89A2FDB /* CookieHarvest.swift */; };
 		035362E08CD3924552AA033C /* FixtureUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20F172DB5EE6907DF10046B /* FixtureUsageProvider.swift */; };
 		036206069B3F311115C8BE26 /* UsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2FA6DDE0BF14E2777998A3 /* UsageProvider.swift */; };
 		07B18DC87439BE1A11F34C6D /* UsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F817A71BFEEF0AD1011DD87E /* UsageCache.swift */; };
@@ -24,7 +25,9 @@
 		3A446971A694F04B3F03163C /* FormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E58572E8155AEA4BBFD15BB /* FormatTests.swift */; };
 		3E222ACCAFF1E5F51AC3D013 /* UsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F817A71BFEEF0AD1011DD87E /* UsageCache.swift */; };
 		418E9646AF3D3ACD0BDA2339 /* UsageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F954862454011C5641C35E78 /* UsageLoader.swift */; };
+		43E9FA3FFD1D19832356ED49 /* CookieHarvest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C16996EB5E01B8C89A2FDB /* CookieHarvest.swift */; };
 		44F34B3D83D3BB1DF2FA4280 /* DashboardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FBD18E4055DDBDD784EAE5 /* DashboardModels.swift */; };
+		46470AF783798C9AFF72D8A3 /* SignInWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3301FC8A86CDD971D4E75E32 /* SignInWebView.swift */; };
 		4F14F7F5095195EBEE996285 /* UsageWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7A220AF6C43BE51292296B /* UsageWindow.swift */; };
 		4FCD37668FFD3A279DB14527 /* UsageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9EB01860DDBDB8AB9577BD2 /* UsageFormat.swift */; };
 		5079E69D01623D02BE26A98D /* FixtureUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20F172DB5EE6907DF10046B /* FixtureUsageProvider.swift */; };
@@ -42,6 +45,7 @@
 		71C6BEED5337E286E3844060 /* UsageModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099C82FC891A07A4CFBB9B2A /* UsageModels.swift */; };
 		729F2D0EC46D941983DC89FB /* SharedStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE27D6D7E51657A686B764 /* SharedStorage.swift */; };
 		753C859941A0892EDFD889BA /* UsageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F954862454011C5641C35E78 /* UsageLoader.swift */; };
+		763B5A8BF670AB2587536A51 /* CookieHarvest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C16996EB5E01B8C89A2FDB /* CookieHarvest.swift */; };
 		7A685AF1641A2CB83BD22D28 /* GrokWebUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8BEC62D3C30A01BA111B28 /* GrokWebUsageProvider.swift */; };
 		7AA7EBD6DC59E7611F37F757 /* KeychainCookieStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76ABACAABC280E05EA84BC3E /* KeychainCookieStore.swift */; };
 		7B90DEEF3E91AAFA6AB36BEF /* SharedStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE27D6D7E51657A686B764 /* SharedStorage.swift */; };
@@ -76,8 +80,10 @@
 		D2CFAAE20863B7475C9AD93A /* RawResponseDump.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8A442F57BF55F2EE6FF35 /* RawResponseDump.swift */; };
 		D50301C15D8D8019A1F720C2 /* UsageModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099C82FC891A07A4CFBB9B2A /* UsageModels.swift */; };
 		DDF412ADEA3EF721872E789B /* DashboardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FBD18E4055DDBDD784EAE5 /* DashboardModels.swift */; };
+		E4A80552D778108404EABE43 /* CookieHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3184C4B02BA5158EBF9B12A /* CookieHeaderTests.swift */; };
 		E667FA95B8FE7678B2AF0892 /* RawResponseDump.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8A442F57BF55F2EE6FF35 /* RawResponseDump.swift */; };
 		E6BA1F52D71B6B216263221E /* UsageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9EB01860DDBDB8AB9577BD2 /* UsageFormat.swift */; };
+		E81CFF444ECDD9905EFF4348 /* CookieHarvest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C16996EB5E01B8C89A2FDB /* CookieHarvest.swift */; };
 		EB87B790459574F3C41C11E7 /* DashboardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FBD18E4055DDBDD784EAE5 /* DashboardModels.swift */; };
 		EBC79ECE32DAB8E288775BC1 /* GrokUsageWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5147C7A002E1EEA387CA5B70 /* GrokUsageWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F263A3390457A16A9DB68D0E /* UsageMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D03EBF77BCF601D2FF5D0D /* UsageMapping.swift */; };
@@ -123,8 +129,10 @@
 		20EB4D23E88B794C585CF726 /* GrokWidgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokWidgetApp.swift; sourceTree = "<group>"; };
 		232CDC4ED5E7E6282D816521 /* GrokUsageWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokUsageWidget.swift; sourceTree = "<group>"; };
 		2456B75DFF99C8EEABF8056D /* GrokUsageKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GrokUsageKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3301FC8A86CDD971D4E75E32 /* SignInWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWebView.swift; sourceTree = "<group>"; };
 		3C80186AA170D0FCF4366850 /* ProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderTests.swift; sourceTree = "<group>"; };
 		3E58572E8155AEA4BBFD15BB /* FormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatTests.swift; sourceTree = "<group>"; };
+		45C16996EB5E01B8C89A2FDB /* CookieHarvest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieHarvest.swift; sourceTree = "<group>"; };
 		4B2FA6DDE0BF14E2777998A3 /* UsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageProvider.swift; sourceTree = "<group>"; };
 		5147C7A002E1EEA387CA5B70 /* GrokUsageWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GrokUsageWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E7E738D95CD9DFA95398CD6 /* grok-usage-dump */ = {isa = PBXFileReference; includeInIndex = 0; path = "grok-usage-dump"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -144,6 +152,7 @@
 		E3CF9FA44BDC34159831B7BC /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 		E68139478DD8D020B1B6DDCA /* ProjectConsistencyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConsistencyTests.swift; sourceTree = "<group>"; };
 		F1735CECFA16EB33DB227C85 /* usage_status_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = usage_status_sample.json; sourceTree = "<group>"; };
+		F3184C4B02BA5158EBF9B12A /* CookieHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieHeaderTests.swift; sourceTree = "<group>"; };
 		F817A71BFEEF0AD1011DD87E /* UsageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageCache.swift; sourceTree = "<group>"; };
 		F954862454011C5641C35E78 /* UsageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageLoader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -181,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				B353DE7B29171F8C4BB63FE7 /* Fixtures */,
+				F3184C4B02BA5158EBF9B12A /* CookieHeaderTests.swift */,
 				6739750BEF806EE03497E68F /* DecodeTests.swift */,
 				3E58572E8155AEA4BBFD15BB /* FormatTests.swift */,
 				04ACAA8AD123CBD31268E8B5 /* MappingTests.swift */,
@@ -225,6 +235,7 @@
 			children = (
 				20EB4D23E88B794C585CF726 /* GrokWidgetApp.swift */,
 				AE7B530A155EA39F0847341F /* SettingsView.swift */,
+				3301FC8A86CDD971D4E75E32 /* SignInWebView.swift */,
 			);
 			path = GrokWidgetApp;
 			sourceTree = "<group>";
@@ -241,6 +252,7 @@
 		DE9796783AA8AD56A2A7AED5 /* GrokUsageKit */ = {
 			isa = PBXGroup;
 			children = (
+				45C16996EB5E01B8C89A2FDB /* CookieHarvest.swift */,
 				14FBD18E4055DDBDD784EAE5 /* DashboardModels.swift */,
 				B20F172DB5EE6907DF10046B /* FixtureUsageProvider.swift */,
 				7C8BEC62D3C30A01BA111B28 /* GrokWebUsageProvider.swift */,
@@ -418,6 +430,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0091248591B64C4673886E27 /* CookieHarvest.swift in Sources */,
 				DDF412ADEA3EF721872E789B /* DashboardModels.swift in Sources */,
 				AD6D3128812B4C63BA2F6768 /* FixtureUsageProvider.swift in Sources */,
 				7A685AF1641A2CB83BD22D28 /* GrokWebUsageProvider.swift in Sources */,
@@ -426,6 +439,7 @@
 				E667FA95B8FE7678B2AF0892 /* RawResponseDump.swift in Sources */,
 				632165B8370169E3A9C9C6A2 /* SettingsView.swift in Sources */,
 				5D9B814364BAC112CEA7FDFA /* SharedStorage.swift in Sources */,
+				46470AF783798C9AFF72D8A3 /* SignInWebView.swift in Sources */,
 				31752B1AB2D7B70994F93FC9 /* TokenChart.swift in Sources */,
 				9D47725E4564E033D553E79D /* UsageCache.swift in Sources */,
 				BC61E038994851C3D8E18323 /* UsageErrors.swift in Sources */,
@@ -443,6 +457,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				43E9FA3FFD1D19832356ED49 /* CookieHarvest.swift in Sources */,
 				EB87B790459574F3C41C11E7 /* DashboardModels.swift in Sources */,
 				8FE6460170D4ECBF59559251 /* FixtureUsageProvider.swift in Sources */,
 				156477BC06DE1F0756CCA013 /* GrokUsageWidget.swift in Sources */,
@@ -468,6 +483,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E81CFF444ECDD9905EFF4348 /* CookieHarvest.swift in Sources */,
+				E4A80552D778108404EABE43 /* CookieHeaderTests.swift in Sources */,
 				6CCE02550B6F7F27DD7B3278 /* DashboardModels.swift in Sources */,
 				81E3A4576F982D4EB232FC88 /* DecodeTests.swift in Sources */,
 				035362E08CD3924552AA033C /* FixtureUsageProvider.swift in Sources */,
@@ -498,6 +515,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				763B5A8BF670AB2587536A51 /* CookieHarvest.swift in Sources */,
 				44F34B3D83D3BB1DF2FA4280 /* DashboardModels.swift in Sources */,
 				08179D1ADB43633D7CAEB120 /* DumpMain.swift in Sources */,
 				5079E69D01623D02BE26A98D /* FixtureUsageProvider.swift in Sources */,

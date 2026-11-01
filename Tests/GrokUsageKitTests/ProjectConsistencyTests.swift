@@ -23,5 +23,17 @@ final class ProjectConsistencyTests: XCTestCase {
         XCTAssertTrue(readme.contains("DEVELOPMENT_TEAM"))
         XCTAssertTrue(readme.contains("Edit Widgets"))
         XCTAssertTrue(readme.contains("CODE_SIGNING_ALLOWED=NO"))
+        XCTAssertTrue(readme.contains("Sign in to grok.com"))
+
+        let signIn = try String(contentsOf: root.appendingPathComponent("Sources/GrokWidgetApp/SignInWebView.swift"), encoding: .utf8)
+        let widget = try String(contentsOf: root.appendingPathComponent("Sources/GrokUsageWidget/GrokUsageWidget.swift"), encoding: .utf8)
+        XCTAssertTrue(signIn.contains("customUserAgent = DashboardEndpoints.userAgent"))
+        XCTAssertTrue(signIn.contains("WKWebsiteDataStore(forIdentifier:"))
+        XCTAssertFalse(signIn.contains("HTTPCookieStorage"))
+        XCTAssertFalse(signIn.contains("binarycookies"))
+        XCTAssertFalse(signIn.contains("WKWebsiteDataStore.default()"))
+        XCTAssertTrue(widget.contains("widgetURL"))
+        XCTAssertTrue(widget.contains("AppLink.signIn"))
+        XCTAssertTrue(appEntitlements.contains("com.apple.security.cs.allow-jit"))
     }
 }

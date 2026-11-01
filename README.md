@@ -1,6 +1,6 @@
 # Grok Usage widget
 
-A macOS desktop widget for [grok.com/dashboard/usage](https://grok.com/dashboard/usage). The host app is a small window used to paste a session cookie and to save raw API responses. It is not a menu-bar app. The widget itself is a WidgetKit extension.
+A macOS desktop widget for [grok.com/dashboard/usage](https://grok.com/dashboard/usage). The host app is a small window used to sign in to grok.com and to save raw API responses. It is not a menu-bar app. The widget itself is a WidgetKit extension.
 
 Small shows the weekly included percent, the progress bar, and the reset date. Medium and large add total tokens, included tokens, credit usage, and a tokens-per-day chart grouped by product.
 
@@ -54,12 +54,18 @@ xcodebuild -project GrokWidget.xcodeproj -scheme GrokWidget -destination 'platfo
 ## Run and add the widget
 
 1. Run the **GrokWidget** scheme. A normal Dock app opens. There is no menu-bar item.
-2. In Safari or Chrome, open `https://grok.com/dashboard/usage`, find the `usage-status` request, and copy its `Cookie` header.
-3. Paste that value into the app and click **Save**. It is stored in the Keychain. It is not written to the repo, logged, or put on the command line.
+2. Click **Sign in to grok.com**. A window opens `https://grok.com/dashboard/usage` in a `WKWebView` with its own persistent data store. Log in there, including SSO or a verification code.
+3. The app watches that web view’s cookie store. It does not read Safari or Chrome. When grok.com cookies are present and `usage-status` returns HTTP 200 JSON, it builds a `Cookie` header from the grok.com cookies only, saves it in the Keychain, closes the window, and reloads widget timelines. Cookie values are never logged.
 4. Optionally click **Fetch and save raw JSON**. Responses land in `~/Library/Application Support/grok_widget/` as `last_usage_status.json`, `last_daily_usage.json`, and `last_daily_usage_request.json`. If a body contains the cookie, that file is not written.
 5. On the desktop, right-click, choose **Edit Widgets**, and add **Grok Usage**. macOS 14+ can place widgets on the desktop (System Settings → Desktop & Dock → Widgets, if the desktop gallery is hidden).
 
-The timeline refreshes about every 15 minutes. Saving or clearing the cookie reloads it immediately. The widget shows the time it last fetched, a stale or error banner when a refresh fails, “Session expired. Re-paste the cookie” on HTTP 401/403 or a redirect to login, and an unavailable state when `availability` is not `available`.
+**Advanced** still has a cookie field. Use it when the sign-in window cannot finish login. Paste the `Cookie` header from the dashboard’s `usage-status` request and click **Save**.
+
+Google’s sign-in page sometimes refuses an embedded web view with “This browser or app may not be secure” (`disallowed_useragent`). The web view sets a desktop Safari user agent, because that check is mostly the user-agent string and the default WKWebView agent is rejected. That workaround often succeeds on macOS, including a verification code that stays on the page, but Google does not support embedded web views and can still refuse. X or email inside the same window is the other path. This was not confirmed against a live Google account here.
+
+When a refresh gets HTTP 401/403 or a redirect to login, the widget shows “Session expired. Sign in again.” Tapping it opens `grokwidget://sign-in`. The app first re-reads cookies from the persistent web view store and probes `usage-status` again, in case the page session was refreshed. If that succeeds, the Keychain is updated and the widget reloads. If it fails, the app shows **Sign in again** and opens the sign-in window.
+
+The timeline refreshes about every 15 minutes. Signing in, saving, or clearing the cookie reloads it immediately. The widget shows the time it last fetched, a stale or error banner when a refresh fails, and an unavailable state when `availability` is not `available`.
 
 `grok-usage-dump` is a small command-line tool built with the same scheme. It reads the cookie from the Keychain (never from an argument) and writes the same JSON files. `--out` changes the directory. It only works once the tool is signed with the same team as the app.
 
@@ -85,7 +91,7 @@ Codable models match the captured samples in `Tests/GrokUsageKitTests/Fixtures/`
 - `project.yml` — XcodeGen project
 - `Sources/GrokUsageKit` — models, formatting, providers, Keychain, cache
 - `Sources/GrokUsageUI` — SwiftUI widget views
-- `Sources/GrokWidgetApp` — settings window
+- `Sources/GrokWidgetApp` — settings window and in-app sign-in
 - `Sources/GrokUsageWidget` — WidgetKit extension
 - `Sources/grok-usage-dump` — raw-JSON command
 - `Tests/GrokUsageKitTests` — formatting, decode, mapping, provider, and snapshot render tests

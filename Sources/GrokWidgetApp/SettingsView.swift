@@ -2,9 +2,12 @@ import SwiftUI
 import WidgetKit
 
 struct SettingsView: View {
+    @Environment(\.openWindow) private var openWindow
+    @EnvironmentObject private var coordinator: SignInCoordinator
+
     @State private var cookieDraft = ""
     @State private var cookieSaved = false
-    @State private var statusMessage = "Paste the Cookie header from the usage-status request."
+    @State private var statusMessage = "Sign in to grok.com. The session is saved in the Keychain."
     @State private var isWorking = false
     @State private var previewSnapshot: UsageSnapshot? = .screenshotFixture
     @State private var previewPresentation: UsagePresentation = .fresh
@@ -17,7 +20,7 @@ struct SettingsView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 header
-                cookieSection
+                signInSection
                 fetchSection
                 previewSection
             }
@@ -26,38 +29,49 @@ struct SettingsView: View {
         }
         .frame(minWidth: 520, minHeight: 640)
         .onAppear(perform: refreshSavedFlag)
+        .onChange(of: coordinator.sessionRevision) { _, _ in
+            refreshSavedFlag()
+        }
+        .onChange(of: coordinator.banner) { _, banner in
+            if let banner {
+                statusMessage = banner
+            }
+        }
+        .onChange(of: coordinator.openSignIn) { _, open in
+            guard open else { return }
+            openWindow(id: "sign-in")
+            coordinator.openSignIn = false
+        }
     }
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("Grok Usage")
                 .font(.title2.weight(.semibold))
-            Text("Desktop widget for grok.com/dashboard/usage. This window only stores the session cookie and can save the raw responses for inspection.")
+            Text("Desktop widget for grok.com/dashboard/usage. Sign in inside this app. The widget reads the session from the shared Keychain.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
     }
 
-    private var cookieSection: some View {
+    private var signInSection: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Session cookie")
+            Text("Session")
                 .font(.headline)
             Text(cookieSaved ? "A session cookie is saved in the Keychain." : "No cookie saved yet.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
-            SecureField("Cookie header", text: $cookieDraft)
-                .textFieldStyle(.roundedBorder)
-            Text("In Safari or Chrome, open the dashboard, select the usage-status request, and copy its Cookie header. It is stored in the Keychain shared with the widget and is not written to disk or the repo.")
+            Button("Sign in to grok.com") {
+                openWindow(id: "sign-in")
+            }
+            .keyboardShortcut(.defaultAction)
+            Text("Opens grok.com in this app. Log in there, including SSO or a verification code. When usage-status accepts the session, the cookie is saved and the window closes. If the widget says the session expired, this app tries that saved sign-in again before asking you to sign in.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-            HStack {
-                Button("Save") { saveCookie() }
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(cookieDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                Button("Clear") { clearCookie() }
-                    .disabled(!cookieSaved && cookieDraft.isEmpty)
+            DisclosureGroup("Advanced") {
+                advancedCookieFields
             }
             if !keychainSharingAvailable {
                 Text("Keychain sharing with the widget needs a Development Team. Unsigned builds keep the cookie in this app’s keychain only.")
@@ -65,6 +79,28 @@ struct SettingsView: View {
                     .foregroundStyle(.secondary)
             }
         }
+    }
+
+    private var advancedCookieFields: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Paste a Cookie header if the sign-in window cannot complete login. It is stored in the Keychain shared with the widget and is not written to disk or the repo.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+            SecureField("Cookie header", text: $cookieDraft)
+                .textFieldStyle(.roundedBorder)
+            HStack {
+                Button("Save") { saveCookie() }
+                    .disabled(cookieDraft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                Button("Clear") { clearCookie() }
+                    .disabled(!cookieSaved && cookieDraft.isEmpty)
+            }
+            Text("Clear removes the Keychain copy only. The sign-in window keeps its own session until you log out there.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.top, 4)
     }
 
     private var fetchSection: some View {
@@ -120,7 +156,7 @@ struct SettingsView: View {
                 RoundedRectangle(cornerRadius: 22, style: .continuous)
                     .stroke(Color.primary.opacity(0.08))
             )
-            Text("Add it from the desktop: right-click, Edit Widgets, then Grok Usage. macOS refreshes the timeline about every 15 minutes, and saving a cookie reloads it.")
+            Text("Add it from the desktop: right-click, Edit Widgets, then Grok Usage. macOS refreshes the timeline about every 15 minutes. Signing in reloads it. A session-expired widget opens this app.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -156,7 +192,7 @@ struct SettingsView: View {
             cookieDraft = ""
             cookieSaved = true
             statusMessage = "Saved to the Keychain."
-            WidgetCenter.shared.reloadTimelines(ofKind: SharedStorage.widgetKind)
+            reloadTimelines()
         } catch {
             statusMessage = error.localizedDescription
         }
@@ -168,17 +204,23 @@ struct SettingsView: View {
             cookieDraft = ""
             cookieSaved = false
             statusMessage = "Removed the cookie from the Keychain."
-            WidgetCenter.shared.reloadTimelines(ofKind: SharedStorage.widgetKind)
+            reloadTimelines()
         } catch {
             statusMessage = error.localizedDescription
         }
     }
 
     private func fetch() async {
+        isWorking = true
+        defer { isWorking = false }
+        await performFetch(allowReharvest: true)
+    }
+
+    private func performFetch(allowReharvest: Bool) async {
         let cookie: String
         do {
             guard let stored = try store.load(), !CookieHeader.normalize(stored).isEmpty else {
-                statusMessage = "Save a cookie first."
+                statusMessage = "Sign in to grok.com first."
                 cookieSaved = false
                 return
             }
@@ -188,8 +230,6 @@ struct SettingsView: View {
             return
         }
 
-        isWorking = true
-        defer { isWorking = false }
         let capture = ResponseCapture()
         let dump = RawResponseDump(directory: RawResponseDump.defaultDirectory)
         do {
@@ -200,13 +240,35 @@ struct SettingsView: View {
             previewPresentation = result.snapshot.isAvailable ? .fresh : .unavailable
             previewIsSample = false
             statusMessage = "\(UsageSummary.line(for: result.snapshot))\n\(dump.directory.path)"
-            WidgetCenter.shared.reloadTimelines(ofKind: SharedStorage.widgetKind)
+            reloadTimelines()
         } catch {
             try? dump.writeFailure(capture: capture, error: error, cookie: cookie)
+            if allowReharvest, error as? UsageFetchError == .sessionExpired {
+                statusMessage = "Session expired. Checking the saved sign-in…"
+                switch await SignInSession.reharvest() {
+                case .recovered:
+                    cookieSaved = true
+                    statusMessage = "Session refreshed. Fetching again…"
+                    await performFetch(allowReharvest: false)
+                case .signInAgain:
+                    previewPresentation = .sessionExpired
+                    statusMessage = "Sign in again."
+                    coordinator.openSignIn = true
+                case .saveFailed(let message):
+                    previewPresentation = .sessionExpired
+                    statusMessage = message
+                }
+                return
+            }
             statusMessage = "\(UsageFetchError.redact(error.localizedDescription, cookie: cookie))\nSaved what came back in \(dump.directory.path)."
             if error as? UsageFetchError == .sessionExpired {
                 previewPresentation = .sessionExpired
             }
         }
+    }
+
+    private func reloadTimelines() {
+        WidgetCenter.shared.reloadAllTimelines()
+        WidgetCenter.shared.reloadTimelines(ofKind: SharedStorage.widgetKind)
     }
 }

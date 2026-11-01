@@ -72,7 +72,7 @@ final class ProviderTests: XCTestCase {
         } catch let error as UsageFetchError {
             XCTAssertEqual(error, .sessionExpired)
             XCTAssertFalse(error.localizedDescription.contains(cookie))
-            XCTAssertTrue(error.localizedDescription.contains("Re-paste"))
+            XCTAssertTrue(error.localizedDescription.contains("Sign in again"))
         }
     }
 
@@ -233,7 +233,7 @@ final class ProviderTests: XCTestCase {
     private func makeProvider() throws -> GrokWebUsageProvider {
         let configuration = URLSessionConfiguration.ephemeral
         configuration.protocolClasses = [MockURLProtocol.self]
-        var provider = GrokWebUsageProvider(cookieHeader: "Cookie: \(cookie)", sessionConfiguration: configuration)
+        let provider = GrokWebUsageProvider(cookieHeader: "Cookie: \(cookie)", sessionConfiguration: configuration)
         provider.client.configuration.protocolClasses = [MockURLProtocol.self]
         URLProtocol.registerClass(MockURLProtocol.self)
         return provider

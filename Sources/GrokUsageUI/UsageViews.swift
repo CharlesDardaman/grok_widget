@@ -43,8 +43,8 @@ struct UsageWidgetRoot: View {
             )
         case .needsCookie:
             StatusPane(
-                title: "Cookie needed",
-                message: "Open Grok Widget and paste your grok.com session cookie.",
+                title: "Sign in needed",
+                message: "Open Grok Widget and sign in to grok.com.",
                 symbol: "key"
             )
         case .unavailable:
@@ -56,7 +56,7 @@ struct UsageWidgetRoot: View {
         case .sessionExpired where snapshot == nil:
             StatusPane(
                 title: "Session expired",
-                message: "Re-paste the cookie in Grok Widget.",
+                message: "Sign in again in Grok Widget.",
                 symbol: "person.crop.circle.badge.exclamationmark"
             )
         case .failed(let message) where snapshot == nil:
@@ -115,7 +115,7 @@ struct UsageWidgetRoot: View {
     private var bannerText: String? {
         switch presentation {
         case .sessionExpired:
-            return "Session expired. Re-paste cookie."
+            return "Session expired. Sign in again."
         case .failed(let message):
             return message
         case .stale:

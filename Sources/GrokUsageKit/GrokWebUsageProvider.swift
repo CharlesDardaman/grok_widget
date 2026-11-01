@@ -64,7 +64,11 @@ struct DashboardClient {
 
     init(cookieHeader: String, sessionConfiguration: URLSessionConfiguration = .ephemeral) {
         self.cookieHeader = cookieHeader
+        let protocolClasses = sessionConfiguration.protocolClasses
         let configuration = sessionConfiguration.copy() as? URLSessionConfiguration ?? .ephemeral
+        if let protocolClasses, !protocolClasses.isEmpty {
+            configuration.protocolClasses = protocolClasses
+        }
         configuration.httpShouldSetCookies = false
         configuration.httpCookieAcceptPolicy = .never
         configuration.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData

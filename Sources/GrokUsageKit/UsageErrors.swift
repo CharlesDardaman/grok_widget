@@ -11,9 +11,9 @@ enum UsageFetchError: Error, Equatable, LocalizedError, Sendable {
     var errorDescription: String? {
         switch self {
         case .missingCookie:
-            return "No session cookie is saved. Paste the Cookie header in Grok Widget."
+            return "No session cookie is saved. Sign in to grok.com in Grok Widget."
         case .sessionExpired:
-            return "Session expired. Re-paste the cookie in Grok Widget."
+            return "Session expired. Sign in again in Grok Widget."
         case .rejectedQuery(let code):
             return "The daily usage query was rejected (\(code))."
         case .httpStatus(let code):
