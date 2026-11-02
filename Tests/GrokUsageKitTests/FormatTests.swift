@@ -80,6 +80,51 @@ final class FormatTests: XCTestCase {
         XCTAssertTrue(snapshot.isAvailable)
     }
 
+    func testTokensTodayMatchesTheLastChartBar() {
+        let snapshot = UsageSnapshot.screenshotFixture
+        let days = ChartSeries.days(in: snapshot, limit: nil)
+        let today = days.last
+        XCTAssertEqual(today?.total, 111_700_000)
+        XCTAssertEqual(ChartSeries.tokensToday(in: snapshot), today?.total)
+        XCTAssertEqual(UsageFormat.tokens(ChartSeries.tokensToday(in: snapshot)), "111.7M")
+        XCTAssertEqual(ChartSeries.days(in: snapshot, limit: 14).last?.total, today?.total)
+    }
+
+    func testTokensTodayIsZeroWhenTheWindowIsEmpty() {
+        var snapshot = UsageSnapshot.screenshotFixture
+        snapshot.chartStart = snapshot.chartEnd
+        snapshot.dailyPoints = []
+        XCTAssertTrue(ChartSeries.days(in: snapshot, limit: nil).isEmpty)
+        XCTAssertEqual(ChartSeries.tokensToday(in: snapshot), 0)
+        XCTAssertEqual(UsageFormat.tokens(ChartSeries.tokensToday(in: snapshot)), "0")
+    }
+
+    func testTokensTodayIsZeroWhenTheLastDayHasNoPoints() {
+        var snapshot = UsageSnapshot.screenshotFixture
+        let start = UsageWindow.utcDate(year: 2026, month: 10, day: 1)
+        snapshot.chartStart = start
+        snapshot.chartEnd = UsageWindow.utcDate(year: 2026, month: 10, day: 4)
+        snapshot.dailyPoints = [
+            DailyPoint(dayStart: start, productSlug: "cursor", tokens: 5_000_000, includedTokens: 5_000_000),
+            DailyPoint(
+                dayStart: UsageWindow.utcDate(year: 2026, month: 10, day: 2),
+                productSlug: "cursor",
+                tokens: 9_000_000,
+                includedTokens: 9_000_000
+            ),
+            DailyPoint(
+                dayStart: UsageWindow.utcDate(year: 2026, month: 10, day: 2),
+                productSlug: "grok-chat",
+                tokens: 1_000_000,
+                includedTokens: 1_000_000
+            ),
+        ]
+        let days = ChartSeries.days(in: snapshot, limit: nil)
+        XCTAssertEqual(days.map(\.total), [5_000_000, 10_000_000, 0])
+        XCTAssertEqual(ChartSeries.tokensToday(in: snapshot), 0)
+        XCTAssertEqual(UsageFormat.tokens(ChartSeries.tokensToday(in: snapshot)), "0")
+    }
+
     func testRefreshInterval() {
         let now = Date(timeIntervalSince1970: 1_000)
         XCTAssertEqual(UsageRefresh.nextRefresh(after: now).timeIntervalSince(now), 15 * 60)

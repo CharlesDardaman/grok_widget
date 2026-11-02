@@ -2,7 +2,7 @@
 
 A macOS desktop widget for [grok.com/dashboard/usage](https://grok.com/dashboard/usage). The host app is a small window used to sign in to grok.com and to save raw API responses. It is not a menu-bar app. The widget itself is a WidgetKit extension.
 
-Small shows the weekly included percent, the progress bar, and the reset date. Medium and large add total tokens, included tokens, credit usage, and a tokens-per-day chart grouped by product.
+Small shows the weekly included percent, the progress bar, and the reset date. Medium and large add total tokens, included tokens, tokens today, and a tokens-per-day chart grouped by product.
 
 ## Requirements
 
@@ -94,7 +94,7 @@ The timeline refreshes about every 15 minutes. Signing in, saving, or clearing t
 
 Headers match the dashboard: `Accept: application/json`, the session `Cookie`, `Referer: https://grok.com/dashboard/usage`, `x-cursor-dashboard-surface: v2`, and a Safari user agent. The POST also sends `Content-Type: application/json` and `Origin: https://grok.com`.
 
-Weekly percent is `weeklyIncludedUsage.usedCents / budgetCents` (1160/16159 is 7.2%, shown as 7%, the same rounding as the dashboard). The reset date is `weeklyIncludedUsage.resetsAt`. `weeklyIncludedStatus.status` (for example `metered`) is shown as a small caption. Credit usage is `monthlyUsage.creditsUsedCents` in dollars. `monthlyUsage.usedCents` is shown beside it when the two differ. `limitCents` may be null.
+Weekly percent is `weeklyIncludedUsage.usedCents / budgetCents` (1160/16159 is 7.2%, shown as 7%, the same rounding as the dashboard). The reset date is `weeklyIncludedUsage.resetsAt`. `weeklyIncludedStatus.status` (for example `metered`) is shown as a small caption. **Tokens today** is the last UTC day of the daily series, the same total as the chart’s last bar, formatted like the other token totals. A day with no points is `0`. Credit fields stay on the model and in the summary line; the widget does not show them.
 
 The daily query covers the current weekly period and at least 14 days, grouped by `product`, with `topN` 5. Headline totals are the sum of daily points inside the weekly period, labeled **This week**, so they are not the dashboard’s arbitrary chart range. The request omits `filters` so `totalTokens` can differ from `totalIncludedTokens`. If the server rejects that with HTTP 400 or 422, the provider retries `usageTypes: ["included", "on-demand"]` and then `["included"]`. The widget footnotes the filter it actually used. Product slugs map to Cursor, Grok Bot, Grok Tasks, Grok Chat, and Grok App Builder; anything else is title-cased, and the `other` bucket is included.
 

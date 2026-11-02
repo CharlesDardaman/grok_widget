@@ -32,9 +32,10 @@ final class RenderTests: XCTestCase {
             presentation: presentation,
             now: UsageSnapshot.screenshotFetchedAt
         )
-        .padding(12)
+        .padding(WidgetPreviewChrome.margin)
         .frame(width: size.width, height: size.height)
         .background(Color(nsColor: .windowBackgroundColor))
+        .clipShape(RoundedRectangle(cornerRadius: WidgetPreviewChrome.cornerRadius, style: .continuous))
         .environment(\.colorScheme, .light)
 
         let renderer = ImageRenderer(content: view)

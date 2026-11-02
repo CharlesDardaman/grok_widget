@@ -21,6 +21,17 @@ enum UsageWidgetSize: String, CaseIterable, Identifiable, Hashable {
     }
 }
 
+/// Chrome for hosts that are not a WidgetKit container. The desktop widget
+/// leaves content margins enabled, so WidgetKit insets `containerBackground`
+/// by `widgetContentMargins` and the view adds no padding of its own. That
+/// environment value is zero in ImageRenderer, SwiftUI previews, and the
+/// settings card. Those hosts pad by `margin` and clip to the continuous
+/// corner so the weekly header clears the radius at the preview size.
+enum WidgetPreviewChrome {
+    static let margin: CGFloat = 16
+    static let cornerRadius: CGFloat = 22
+}
+
 struct UsageWidgetRoot: View {
     var family: UsageWidgetSize
     var snapshot: UsageSnapshot?
@@ -150,7 +161,7 @@ struct MediumUsageView: View {
             WeeklyBlock(snapshot: snapshot, compact: true)
                 .frame(width: 112)
             VStack(alignment: .leading, spacing: 4) {
-                TokenStats(snapshot: snapshot, showsDetail: false)
+                TokenStats(snapshot: snapshot)
                 StackedTokenChart(
                     snapshot: snapshot,
                     dayLimit: 14,
@@ -173,7 +184,7 @@ struct LargeUsageView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             WeeklyBlock(snapshot: snapshot, compact: false)
-            TokenStats(snapshot: snapshot, showsDetail: true)
+            TokenStats(snapshot: snapshot)
             StackedTokenChart(
                 snapshot: snapshot,
                 dayLimit: nil,
@@ -252,7 +263,6 @@ struct UsageProgressBar: View {
 
 struct TokenStats: View {
     var snapshot: UsageSnapshot
-    var showsDetail: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -268,7 +278,10 @@ struct TokenStats: View {
             HStack(alignment: .top, spacing: 8) {
                 StatTile(title: "Total", value: UsageFormat.tokens(snapshot.totalTokens))
                 StatTile(title: "Included", value: UsageFormat.tokens(snapshot.includedTokens))
-                creditTile
+                StatTile(
+                    title: "Tokens today",
+                    value: UsageFormat.tokens(ChartSeries.tokensToday(in: snapshot))
+                )
             }
             if let caption = snapshot.totalsModeCaption {
                 Text(caption)
@@ -277,33 +290,6 @@ struct TokenStats: View {
                     .lineLimit(1)
             }
         }
-    }
-
-    private var creditTile: some View {
-        VStack(alignment: .leading, spacing: 1) {
-            Text(showsDetail ? "Credit usage" : "Credit")
-                .font(.caption2)
-                .foregroundStyle(.secondary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
-            Text(UsageFormat.usd(cents: snapshot.creditsUsedCents))
-                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                .monospacedDigit()
-                .minimumScaleFactor(0.6)
-                .lineLimit(1)
-            if snapshot.monthlyUsedCents != snapshot.creditsUsedCents {
-                Text("Used \(UsageFormat.usd(cents: snapshot.monthlyUsedCents))")
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
-            } else if showsDetail, let limit = snapshot.monthlyLimitCents {
-                Text("Limit \(UsageFormat.usd(cents: limit))")
-                    .font(.caption2)
-                    .foregroundStyle(.tertiary)
-                    .lineLimit(1)
-            }
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -317,6 +303,7 @@ struct StatTile: View {
                 .font(.caption2)
                 .foregroundStyle(.secondary)
                 .lineLimit(1)
+                .minimumScaleFactor(0.7)
             Text(value)
                 .font(.system(size: 15, weight: .semibold, design: .rounded))
                 .monospacedDigit()
