@@ -152,10 +152,14 @@ final class CookieHeaderTests: XCTestCase {
         XCTAssertTrue(AppLink.isSignIn(AppLink.signIn))
         XCTAssertTrue(AppLink.isSignIn(URL(string: "grokwidget://sign-in/extra")!))
         XCTAssertFalse(AppLink.isSignIn(URL(string: "grokwidget://open")!))
+        XCTAssertFalse(AppLink.isSignIn(AppLink.openUsage))
         XCTAssertFalse(AppLink.isSignIn(URL(string: "https://grok.com/sign-in")!))
         XCTAssertEqual(AppLink.signIn.scheme, "grokwidget")
         XCTAssertEqual(AppLink.signIn.host, "sign-in")
         XCTAssertTrue(AppLink.isAppLink(AppLink.showApp))
+        XCTAssertTrue(AppLink.isOpenUsage(AppLink.openUsage))
+        XCTAssertEqual(AppLink.dashboard.absoluteString, "https://grok.com/dashboard/usage")
+        XCTAssertEqual(AppLink.dashboard.absoluteString, DashboardEndpoints.referer)
     }
 
     func testEveryWidgetStateHasALink() {
@@ -164,7 +168,8 @@ final class CookieHeaderTests: XCTestCase {
         XCTAssertEqual(AppLink.widgetURL(for: .sessionExpired), signIn)
         for presentation in [UsagePresentation.fresh, .stale, .loading, .unavailable, .failed("offline")] {
             let link = AppLink.widgetURL(for: presentation)
-            XCTAssertEqual(link, URL(string: "grokwidget://open"))
+            XCTAssertEqual(link, AppLink.openUsage)
+            XCTAssertEqual(link.absoluteString, "grokwidget://open-usage")
             XCTAssertFalse(AppLink.isSignIn(link))
         }
     }

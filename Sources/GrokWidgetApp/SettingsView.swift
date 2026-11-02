@@ -59,7 +59,7 @@ struct SettingsView: View {
                 coordinator.presentSignIn = true
             }
             .keyboardShortcut(.defaultAction)
-            Text("Opens grok.com in this app. Log in there, including SSO or a verification code. When usage-status accepts the session, the cookie is saved, the sheet closes, and the widget reloads. Clicking the widget opens this app. Sign in needed and session expired open this sheet.")
+            Text("Opens grok.com in this app. Log in there, including SSO or a verification code. When usage-status accepts the session, the cookie is saved, the sheet closes, and the widget reloads. Clicking a signed-in widget opens the dashboard in your browser. Sign in needed and session expired open this sheet.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)

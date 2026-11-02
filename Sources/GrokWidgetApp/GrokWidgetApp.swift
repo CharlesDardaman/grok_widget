@@ -10,6 +10,22 @@ enum WidgetReload {
     }
 }
 
+@MainActor
+enum DashboardBrowser {
+    private static var lastOpenedAt = Date.distantPast
+
+    /// Opens the dashboard in the default browser, then hides this app so the
+    /// browser stays in front. A second call within the same click only hides.
+    static func openUsage() {
+        let now = Date()
+        if now.timeIntervalSince(lastOpenedAt) >= 1.5 {
+            guard NSWorkspace.shared.open(AppLink.dashboard) else { return }
+            lastOpenedAt = now
+        }
+        NSApplication.shared.hide(nil)
+    }
+}
+
 enum AppForeground {
     /// Brings this app forward with AppKit.
     static func activate() {
@@ -62,6 +78,10 @@ final class SignInCoordinator: ObservableObject {
             return
         }
         lastLinkAt[key] = Date()
+        if AppLink.isOpenUsage(url) {
+            DashboardBrowser.openUsage()
+            return
+        }
         AppForeground.activate()
         guard AppLink.isSignIn(url) else { return }
 
@@ -144,6 +164,7 @@ final class GrokWidgetAppDelegate: NSObject, NSApplicationDelegate {
     var coordinator: SignInCoordinator?
     private var pendingURLs: [URL] = []
     private var isReady = false
+    private(set) var opensDashboard = false
 
     override init() {
         super.init()
@@ -166,7 +187,9 @@ final class GrokWidgetAppDelegate: NSObject, NSApplicationDelegate {
         // later `open grokwidget://sign-in` still reaches the sign-in sheet.
         GrokGetURLHandler.shared.install()
         captureLaunchURL()
-        AppForeground.activate()
+        if !opensDashboard {
+            AppForeground.activate()
+        }
     }
 
     func application(_ application: NSApplication, open urls: [URL]) {
@@ -176,6 +199,10 @@ final class GrokWidgetAppDelegate: NSObject, NSApplicationDelegate {
     func accept(_ urls: [URL]) {
         for url in urls where AppLink.isAppLink(url) && !pendingURLs.contains(url) {
             pendingURLs.append(url)
+            if AppLink.isOpenUsage(url) {
+                opensDashboard = true
+                DashboardBrowser.openUsage()
+            }
         }
         drainIfReady()
     }
@@ -196,7 +223,6 @@ final class GrokWidgetAppDelegate: NSObject, NSApplicationDelegate {
         pendingURLs = []
         guard !batch.isEmpty else { return }
         Task { @MainActor in
-            AppForeground.activate()
             for url in batch {
                 await coordinator.handle(url)
             }
@@ -239,9 +265,12 @@ struct MainWindow: View {
             .onAppear {
                 appDelegate.coordinator = coordinator
                 Task { @MainActor in
-                    // Let the window exist before a sheet is requested.
+                    // Let the window exist before a sheet is requested. A dashboard
+                    // click hides again here so SwiftUI cannot leave the window in front.
                     await Task.yield()
-                    AppForeground.activate()
+                    if appDelegate.opensDashboard {
+                        DashboardBrowser.openUsage()
+                    }
                     appDelegate.markReady()
                 }
             }
