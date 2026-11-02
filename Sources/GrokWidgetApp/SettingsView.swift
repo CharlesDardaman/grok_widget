@@ -1,8 +1,6 @@
 import SwiftUI
-import WidgetKit
 
 struct SettingsView: View {
-    @Environment(\.openWindow) private var openWindow
     @EnvironmentObject private var coordinator: SignInCoordinator
 
     @State private var cookieDraft = ""
@@ -37,11 +35,6 @@ struct SettingsView: View {
                 statusMessage = banner
             }
         }
-        .onChange(of: coordinator.openSignIn) { _, open in
-            guard open else { return }
-            openWindow(id: "sign-in")
-            coordinator.openSignIn = false
-        }
     }
 
     private var header: some View {
@@ -63,10 +56,10 @@ struct SettingsView: View {
                 .font(.callout)
                 .foregroundStyle(.secondary)
             Button("Sign in to grok.com") {
-                openWindow(id: "sign-in")
+                coordinator.presentSignIn = true
             }
             .keyboardShortcut(.defaultAction)
-            Text("Opens grok.com in this app. Log in there, including SSO or a verification code. When usage-status accepts the session, the cookie is saved and the window closes. If the widget says the session expired, this app tries that saved sign-in again before asking you to sign in.")
+            Text("Opens grok.com in this app. Log in there, including SSO or a verification code. When usage-status accepts the session, the cookie is saved, the sheet closes, and the widget reloads. Clicking the widget opens this app. Sign in needed and session expired open this sheet.")
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -253,7 +246,7 @@ struct SettingsView: View {
                 case .signInAgain:
                     previewPresentation = .sessionExpired
                     statusMessage = "Sign in again."
-                    coordinator.openSignIn = true
+                    coordinator.presentSignIn = true
                 case .saveFailed(let message):
                     previewPresentation = .sessionExpired
                     statusMessage = message
@@ -268,7 +261,6 @@ struct SettingsView: View {
     }
 
     private func reloadTimelines() {
-        WidgetCenter.shared.reloadAllTimelines()
-        WidgetCenter.shared.reloadTimelines(ofKind: SharedStorage.widgetKind)
+        WidgetReload.all()
     }
 }

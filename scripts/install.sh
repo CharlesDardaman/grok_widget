@@ -1,6 +1,7 @@
 #!/bin/bash
 # Build the host app with the team in Config/Local.xcconfig, install it to
 # /Applications, and refresh the widget gallery. Does not print the team ID.
+# Quits and launches with killall and open.
 
 set -euo pipefail
 
@@ -91,6 +92,11 @@ dest="/Applications/GrokWidget.app"
 rm -rf "$dest"
 ditto "$app" "$dest"
 echo "Installed $dest"
+
+lsregister="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
+if [[ -x "$lsregister" ]]; then
+  "$lsregister" -f "$dest" >/dev/null 2>&1 || true
+fi
 open "$dest"
 
 # Notification Center caches the widget gallery. Restarting it picks up the new extension.

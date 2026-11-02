@@ -74,9 +74,25 @@ enum CookieHeaderBuilder {
 
 enum AppLink {
     static let signIn = URL(string: "grokwidget://sign-in")!
+    static let showApp = URL(string: "grokwidget://open")!
+
+    static func isAppLink(_ url: URL) -> Bool {
+        url.scheme?.lowercased() == "grokwidget"
+    }
 
     static func isSignIn(_ url: URL) -> Bool {
-        url.scheme?.lowercased() == "grokwidget" && url.host?.lowercased() == "sign-in"
+        isAppLink(url) && url.host?.lowercased() == "sign-in"
+    }
+
+    /// Every widget state is tappable. Sign-in and an expired session open the
+    /// sign-in sheet. Any other state just brings the app forward.
+    static func widgetURL(for presentation: UsagePresentation) -> URL {
+        switch presentation {
+        case .needsCookie, .sessionExpired:
+            return URL(string: "grokwidget://sign-in")!
+        case .fresh, .stale, .loading, .unavailable, .failed:
+            return URL(string: "grokwidget://open")!
+        }
     }
 }
 

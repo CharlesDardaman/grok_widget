@@ -68,8 +68,8 @@ struct GrokUsageWidget: Widget {
     var body: some WidgetConfiguration {
         StaticConfiguration(kind: SharedStorage.widgetKind, provider: UsageTimelineProvider()) { entry in
             UsageWidgetView(entry: entry)
-                .widgetURL(entry.presentation == .sessionExpired ? AppLink.signIn : nil)
                 .containerBackground(Color(nsColor: .windowBackgroundColor), for: .widget)
+                .widgetURL(AppLink.widgetURL(for: entry.presentation))
         }
         .configurationDisplayName("Grok Usage")
         .description("Weekly included usage, token totals, and tokens per day from grok.com.")

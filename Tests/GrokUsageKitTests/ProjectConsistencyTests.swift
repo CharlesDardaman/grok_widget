@@ -49,8 +49,26 @@ final class ProjectConsistencyTests: XCTestCase {
         XCTAssertFalse(signIn.contains("HTTPCookieStorage"))
         XCTAssertFalse(signIn.contains("binarycookies"))
         XCTAssertFalse(signIn.contains("WKWebsiteDataStore.default()"))
-        XCTAssertTrue(widget.contains("widgetURL"))
-        XCTAssertTrue(widget.contains("AppLink.signIn"))
+        XCTAssertTrue(widget.contains(".widgetURL(AppLink.widgetURL(for: entry.presentation))"))
+        XCTAssertFalse(widget.contains("widgetURL(entry.presentation == .sessionExpired"))
+        let info = try String(contentsOf: root.appendingPathComponent("Config/InfoAdditions.plist"), encoding: .utf8)
+        XCTAssertTrue(info.contains("grokwidget"))
+        let links = try String(contentsOf: root.appendingPathComponent("Sources/GrokUsageKit/CookieHarvest.swift"), encoding: .utf8)
+        XCTAssertTrue(links.contains("URL(string: \"grokwidget://sign-in\")"))
         XCTAssertTrue(appEntitlements.contains("com.apple.security.cs.allow-jit"))
+
+        let app = try String(contentsOf: root.appendingPathComponent("Sources/GrokWidgetApp/GrokWidgetApp.swift"), encoding: .utf8)
+        XCTAssertTrue(app.contains(".onOpenURL"))
+        XCTAssertTrue(app.contains(".handlesExternalEvents(matching: [\"*\"])"))
+        XCTAssertTrue(app.contains(".widgetURL") == false)
+        XCTAssertFalse(app.contains("URLTrace"))
+        XCTAssertFalse(app.contains("osascript"))
+        XCTAssertFalse(app.contains("System Events"))
+
+        let install = try String(contentsOf: root.appendingPathComponent("scripts/install.sh"), encoding: .utf8)
+        XCTAssertTrue(install.contains("killall GrokWidget"))
+        XCTAssertTrue(install.contains("open \"$dest\""))
+        XCTAssertFalse(install.contains("osascript"))
+        XCTAssertFalse(install.contains("System Events"))
     }
 }

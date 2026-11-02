@@ -1,6 +1,5 @@
 import SwiftUI
 import WebKit
-import WidgetKit
 
 /// Persistent store for the in-app grok.com session.
 /// This is the app's own WKWebsiteDataStore. Safari and Chrome are never read.
@@ -41,8 +40,7 @@ enum SignInSession {
             save: { header in try store.save(header) }
         ).run()
         if outcome == .recovered {
-            WidgetCenter.shared.reloadAllTimelines()
-            WidgetCenter.shared.reloadTimelines(ofKind: SharedStorage.widgetKind)
+            WidgetReload.all()
         }
         return outcome
     }
@@ -150,8 +148,7 @@ final class GrokSignInObserver: NSObject, WKNavigationDelegate, WKUIDelegate, WK
         case .recovered:
             didSucceed = true
             webView?.configuration.websiteDataStore.httpCookieStore.remove(self)
-            WidgetCenter.shared.reloadAllTimelines()
-            WidgetCenter.shared.reloadTimelines(ofKind: SharedStorage.widgetKind)
+            WidgetReload.all()
             onSignedIn()
         case .signInAgain:
             break
@@ -162,9 +159,9 @@ final class GrokSignInObserver: NSObject, WKNavigationDelegate, WKUIDelegate, WK
 }
 
 struct SignInView: View {
-    @Environment(\.dismissWindow) private var dismissWindow
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var coordinator: SignInCoordinator
-    @State private var status = "Sign in on grok.com. This window closes once usage-status accepts the session."
+    @State private var status = "Sign in on grok.com. This sheet closes once usage-status accepts the session."
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -178,7 +175,7 @@ struct SignInView: View {
             SignInWebView(
                 onSignedIn: {
                     coordinator.noteInteractiveSignIn()
-                    dismissWindow(id: "sign-in")
+                    dismiss()
                 },
                 onStatus: { status = $0 }
             )

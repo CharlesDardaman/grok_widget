@@ -24,7 +24,7 @@ This is the recommended path. It builds the host app (the window with **Sign in 
 ./scripts/install.sh
 ```
 
-The script needs full Xcode and `Config/Local.xcconfig` with your real `DEVELOPMENT_TEAM`. It stops with a clear error if that file or the team is missing, and it does not print the team ID. When it finishes, click **Sign in to grok.com**, then on the desktop right-click, choose **Edit Widgets**, and add **Grok Usage**.
+The script needs full Xcode and `Config/Local.xcconfig` with your real `DEVELOPMENT_TEAM`. It stops with a clear error if that file or the team is missing, and it does not print the team ID. It quits a running copy with `killall`, copies the app to `/Applications`, registers it with Launch Services, and opens it with `open`. When it finishes, click **Sign in to grok.com**, then on the desktop right-click, choose **Edit Widgets**, and add **Grok Usage**. `open grokwidget://sign-in` opens the same sign-in sheet.
 
 In Xcode, run the **GrokWidgetApp** scheme. **GrokWidgetExtension** only opens the WidgetKit preview. It is not the sign-in app.
 
@@ -75,7 +75,7 @@ xcodebuild -project GrokWidget.xcodeproj -scheme GrokWidgetApp -destination 'pla
 
 Google’s sign-in page sometimes refuses an embedded web view with “This browser or app may not be secure” (`disallowed_useragent`). The web view sets a desktop Safari user agent, because that check is mostly the user-agent string and the default WKWebView agent is rejected. That workaround often succeeds on macOS, including a verification code that stays on the page, but Google does not support embedded web views and can still refuse. X or email inside the same window is the other path. This was not confirmed against a live Google account here.
 
-When a refresh gets HTTP 401/403 or a redirect to login, the widget shows “Session expired. Sign in again.” Tapping it opens `grokwidget://sign-in`. The app first re-reads cookies from the persistent web view store and probes `usage-status` again, in case the page session was refreshed. If that succeeds, the Keychain is updated and the widget reloads. If it fails, the app shows **Sign in again** and opens the sign-in window.
+Clicking the widget always opens the app (`grokwidget://open`). **Sign in needed** and **Session expired** use `grokwidget://sign-in`, which brings the window forward and opens the sign-in sheet. The app first re-reads cookies from the persistent web view store and probes `usage-status`. If that succeeds, the Keychain is updated and the widget reloads. If it fails, the sheet stays open. A successful sign-in also reloads widget timelines immediately.
 
 The timeline refreshes about every 15 minutes. Signing in, saving, or clearing the cookie reloads it immediately. The widget shows the time it last fetched, a stale or error banner when a refresh fails, and an unavailable state when `availability` is not `available`.
 
