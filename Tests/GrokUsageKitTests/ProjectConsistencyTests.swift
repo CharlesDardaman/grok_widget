@@ -24,6 +24,23 @@ final class ProjectConsistencyTests: XCTestCase {
         XCTAssertTrue(readme.contains("Edit Widgets"))
         XCTAssertTrue(readme.contains("CODE_SIGNING_ALLOWED=NO"))
         XCTAssertTrue(readme.contains("Sign in to grok.com"))
+        XCTAssertTrue(readme.contains("./scripts/install.sh"))
+        XCTAssertTrue(readme.contains("GrokWidgetApp"))
+        XCTAssertTrue(project.contains("GrokWidgetApp:"))
+        XCTAssertTrue(project.contains("GrokWidgetExtension:"))
+        XCTAssertTrue(project.contains("executable: GrokWidget"))
+
+        let appScheme = try String(
+            contentsOf: root.appendingPathComponent("GrokWidget.xcodeproj/xcshareddata/xcschemes/GrokWidgetApp.xcscheme"),
+            encoding: .utf8
+        )
+        XCTAssertTrue(appScheme.contains("BuildableName = \"GrokWidget.app\""))
+        XCTAssertFalse(appScheme.contains("wasCreatedForAppExtension"))
+        XCTAssertFalse(
+            FileManager.default.fileExists(
+                atPath: root.appendingPathComponent("GrokWidget.xcodeproj/xcshareddata/xcschemes/GrokWidget.xcscheme").path
+            )
+        )
 
         let signIn = try String(contentsOf: root.appendingPathComponent("Sources/GrokWidgetApp/SignInWebView.swift"), encoding: .utf8)
         let widget = try String(contentsOf: root.appendingPathComponent("Sources/GrokUsageWidget/GrokUsageWidget.swift"), encoding: .utf8)

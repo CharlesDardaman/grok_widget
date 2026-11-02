@@ -16,6 +16,18 @@ If `xcodebuild` says the active developer directory is Command Line Tools, point
 export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 ```
 
+## Install
+
+This is the recommended path. It builds the host app (the window with **Sign in to grok.com**), installs it to `/Applications`, opens it, and restarts Notification Center so the widget gallery sees the new extension.
+
+```bash
+./scripts/install.sh
+```
+
+The script needs full Xcode and `Config/Local.xcconfig` with your real `DEVELOPMENT_TEAM`. It stops with a clear error if that file or the team is missing, and it does not print the team ID. When it finishes, click **Sign in to grok.com**, then on the desktop right-click, choose **Edit Widgets**, and add **Grok Usage**.
+
+In Xcode, run the **GrokWidgetApp** scheme. **GrokWidgetExtension** only opens the WidgetKit preview. It is not the sign-in app.
+
 ## Signing
 
 Automatic signing is on (`CODE_SIGN_STYLE = Automatic`). The team ID is not committed.
@@ -34,7 +46,7 @@ Automatic signing is on (`CODE_SIGN_STYLE = Automatic`). The team ID is not comm
    xcodegen generate
    ```
 
-4. Open `GrokWidget.xcodeproj`, select the GrokWidget scheme, and run it.
+4. Open `GrokWidget.xcodeproj` and run the **GrokWidgetApp** scheme. Do not run **GrokWidgetExtension** if you want the sign-in window. `./scripts/install.sh` does this build for you and copies the app to `/Applications`.
 
 The app and the widget extension share:
 
@@ -47,13 +59,13 @@ Both identifiers are in the entitlements files. Xcode’s automatic signing regi
 
 ```bash
 export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
-xcodebuild -project GrokWidget.xcodeproj -scheme GrokWidget -destination 'platform=macOS' -configuration Debug CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=- build
-xcodebuild -project GrokWidget.xcodeproj -scheme GrokWidget -destination 'platform=macOS' -configuration Debug CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=- test
+xcodebuild -project GrokWidget.xcodeproj -scheme GrokWidgetApp -destination 'platform=macOS' -configuration Debug CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=- build
+xcodebuild -project GrokWidget.xcodeproj -scheme GrokWidgetApp -destination 'platform=macOS' -configuration Debug CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=- test
 ```
 
 ## Run and add the widget
 
-1. Run the **GrokWidget** scheme. A normal Dock app opens. There is no menu-bar item.
+1. Run `./scripts/install.sh`, or run the **GrokWidgetApp** scheme in Xcode. A normal Dock app opens. There is no menu-bar item. **GrokWidgetExtension** is only the widget preview.
 2. Click **Sign in to grok.com**. A window opens `https://grok.com/dashboard/usage` in a `WKWebView` with its own persistent data store. Log in there, including SSO or a verification code.
 3. The app watches that web view’s cookie store. It does not read Safari or Chrome. When grok.com cookies are present and `usage-status` returns HTTP 200 JSON, it builds a `Cookie` header from the grok.com cookies only, saves it in the Keychain, closes the window, and reloads widget timelines. Cookie values are never logged.
 4. Optionally click **Fetch and save raw JSON**. Responses land in `~/Library/Application Support/grok_widget/` as `last_usage_status.json`, `last_daily_usage.json`, and `last_daily_usage_request.json`. If a body contains the cookie, that file is not written.
@@ -88,7 +100,8 @@ Codable models match the captured samples in `Tests/GrokUsageKitTests/Fixtures/`
 
 ## Layout
 
-- `project.yml` — XcodeGen project
+- `project.yml` — XcodeGen project. Shared schemes are **GrokWidgetApp** (runs the host app) and **GrokWidgetExtension** (WidgetKit preview)
+- `scripts/install.sh` — signed build, install to `/Applications`, open the app
 - `Sources/GrokUsageKit` — models, formatting, providers, Keychain, cache
 - `Sources/GrokUsageUI` — SwiftUI widget views
 - `Sources/GrokWidgetApp` — settings window and in-app sign-in

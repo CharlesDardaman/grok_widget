@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1430"
-   wasCreatedForAppExtension = "YES"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -75,9 +74,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "16B6D3015017AEB4CC11C200"
-            BuildableName = "GrokUsageWidget.appex"
-            BlueprintName = "GrokUsageWidget"
+            BlueprintIdentifier = "61DD3F5687AE0FAC51DACE77"
+            BuildableName = "GrokWidget.app"
+            BlueprintName = "GrokWidget"
             ReferencedContainer = "container:GrokWidget.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -99,22 +98,21 @@
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = ""
-      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES"
-      launchAutomaticallySubstyle = "2">
+      allowLocationSimulation = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "16B6D3015017AEB4CC11C200"
-            BuildableName = "GrokUsageWidget.appex"
-            BlueprintName = "GrokUsageWidget"
+            BlueprintIdentifier = "61DD3F5687AE0FAC51DACE77"
+            BuildableName = "GrokWidget.app"
+            BlueprintName = "GrokWidget"
             ReferencedContainer = "container:GrokWidget.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -131,9 +129,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "16B6D3015017AEB4CC11C200"
-            BuildableName = "GrokUsageWidget.appex"
-            BlueprintName = "GrokUsageWidget"
+            BlueprintIdentifier = "61DD3F5687AE0FAC51DACE77"
+            BuildableName = "GrokWidget.app"
+            BlueprintName = "GrokWidget"
             ReferencedContainer = "container:GrokWidget.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

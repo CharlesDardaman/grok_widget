@@ -98,7 +98,7 @@ targets:
         TEST_HOST: ""
         BUNDLE_LOADER: "$(TEST_HOST)"
 schemes:
-  GrokWidget:
+  GrokWidgetApp:
     build:
       targets:
         GrokWidget: all
@@ -107,7 +107,26 @@ schemes:
         GrokUsageKitTests: [test]
     run:
       config: Debug
+      # The first runnable target sorts as the widget extension. Name the app
+      # or Xcode opens the WidgetKit preview instead of the sign-in window.
+      executable: GrokWidget
     test:
       config: Debug
       targets:
         - GrokUsageKitTests
+    management:
+      shared: true
+      orderHint: 0
+      isShown: true
+  GrokWidgetExtension:
+    build:
+      targets:
+        GrokUsageWidget: all
+        GrokWidget: [run, test]
+    run:
+      config: Debug
+      executable: GrokUsageWidget
+    management:
+      shared: true
+      orderHint: 1
+      isShown: true
