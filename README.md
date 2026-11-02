@@ -1,0 +1,110 @@
+# Grok Usage widget
+
+A macOS desktop widget for [grok.com/dashboard/usage](https://grok.com/dashboard/usage). The host app is a small window used to sign in to grok.com and to save raw API responses. It is not a menu-bar app. The widget itself is a WidgetKit extension.
+
+Small shows the weekly included percent, the progress bar, and the reset date. Medium and large add total tokens, included tokens, credit usage, and a tokens-per-day chart grouped by product.
+
+## Requirements
+
+- macOS 14 or later
+- Xcode 15 or later (this repo was built with Xcode 27)
+- [XcodeGen](https://github.com/yonaskolb/XcodeGen) if you change `project.yml` (`brew install xcodegen`)
+
+If `xcodebuild` says the active developer directory is Command Line Tools, point it at Xcode for the shell you are using:
+
+```bash
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+```
+
+## Install
+
+This is the recommended path. It builds the host app (the window with **Sign in to grok.com**), installs it to `/Applications`, opens it, and restarts Notification Center so the widget gallery sees the new extension.
+
+```bash
+./scripts/install.sh
+```
+
+The script needs full Xcode and `Config/Local.xcconfig` with your real `DEVELOPMENT_TEAM`. It stops with a clear error if that file or the team is missing, and it does not print the team ID. When it finishes, click **Sign in to grok.com**, then on the desktop right-click, choose **Edit Widgets**, and add **Grok Usage**.
+
+In Xcode, run the **GrokWidgetApp** scheme. **GrokWidgetExtension** only opens the WidgetKit preview. It is not the sign-in app.
+
+## Signing
+
+Automatic signing is on (`CODE_SIGN_STYLE = Automatic`). The team ID is not committed.
+
+1. Copy the example config:
+
+   ```bash
+   cp Config/Local.xcconfig.example Config/Local.xcconfig
+   ```
+
+2. Set `DEVELOPMENT_TEAM` to your 10-character Team ID (Xcode → Settings → Accounts → your team). A personal team is enough.
+
+3. Regenerate the project if you edit `project.yml`:
+
+   ```bash
+   xcodegen generate
+   ```
+
+4. Open `GrokWidget.xcodeproj` and run the **GrokWidgetApp** scheme. Do not run **GrokWidgetExtension** if you want the sign-in window. `./scripts/install.sh` does this build for you and copies the app to `/Applications`.
+
+The app and the widget extension share:
+
+- App Group `group.com.charlesdardaman.grok-widget` (cached `UsageSnapshot`)
+- Keychain access group `$(AppIdentifierPrefix)com.charlesdardaman.grok-widget.shared` (the session cookie)
+
+Both identifiers are in the entitlements files. Xcode’s automatic signing registers them for your team the first time you build a signed app. The widget can read the cookie only when both targets are signed with that team. An unsigned build still compiles; the cookie stays in the app keychain and the extension will not see it.
+
+### Unsigned build
+
+```bash
+export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+xcodebuild -project GrokWidget.xcodeproj -scheme GrokWidgetApp -destination 'platform=macOS' -configuration Debug CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=- build
+xcodebuild -project GrokWidget.xcodeproj -scheme GrokWidgetApp -destination 'platform=macOS' -configuration Debug CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=- test
+```
+
+## Run and add the widget
+
+1. Run `./scripts/install.sh`, or run the **GrokWidgetApp** scheme in Xcode. A normal Dock app opens. There is no menu-bar item. **GrokWidgetExtension** is only the widget preview.
+2. Click **Sign in to grok.com**. A window opens `https://grok.com/dashboard/usage` in a `WKWebView` with its own persistent data store. Log in there, including SSO or a verification code.
+3. The app watches that web view’s cookie store. It does not read Safari or Chrome. When grok.com cookies are present and `usage-status` returns HTTP 200 JSON, it builds a `Cookie` header from the grok.com cookies only, saves it in the Keychain, closes the window, and reloads widget timelines. Cookie values are never logged.
+4. Optionally click **Fetch and save raw JSON**. Responses land in `~/Library/Application Support/grok_widget/` as `last_usage_status.json`, `last_daily_usage.json`, and `last_daily_usage_request.json`. If a body contains the cookie, that file is not written.
+5. On the desktop, right-click, choose **Edit Widgets**, and add **Grok Usage**. macOS 14+ can place widgets on the desktop (System Settings → Desktop & Dock → Widgets, if the desktop gallery is hidden).
+
+**Advanced** still has a cookie field. Use it when the sign-in window cannot finish login. Paste the `Cookie` header from the dashboard’s `usage-status` request and click **Save**.
+
+Google’s sign-in page sometimes refuses an embedded web view with “This browser or app may not be secure” (`disallowed_useragent`). The web view sets a desktop Safari user agent, because that check is mostly the user-agent string and the default WKWebView agent is rejected. That workaround often succeeds on macOS, including a verification code that stays on the page, but Google does not support embedded web views and can still refuse. X or email inside the same window is the other path. This was not confirmed against a live Google account here.
+
+When a refresh gets HTTP 401/403 or a redirect to login, the widget shows “Session expired. Sign in again.” Tapping it opens `grokwidget://sign-in`. The app first re-reads cookies from the persistent web view store and probes `usage-status` again, in case the page session was refreshed. If that succeeds, the Keychain is updated and the widget reloads. If it fails, the app shows **Sign in again** and opens the sign-in window.
+
+The timeline refreshes about every 15 minutes. Signing in, saving, or clearing the cookie reloads it immediately. The widget shows the time it last fetched, a stale or error banner when a refresh fails, and an unavailable state when `availability` is not `available`.
+
+`grok-usage-dump` is a small command-line tool built with the same scheme. It reads the cookie from the Keychain (never from an argument) and writes the same JSON files. `--out` changes the directory. It only works once the tool is signed with the same team as the app.
+
+## Data
+
+`GrokWebUsageProvider` calls the two captured endpoints:
+
+- `GET https://grok.com/dashboard/api/dashboard/v2/usage-status?scope=user`
+- `POST https://grok.com/dashboard/api/dashboard/v2/query-daily-usage`
+
+Headers match the dashboard: `Accept: application/json`, the session `Cookie`, `Referer: https://grok.com/dashboard/usage`, `x-cursor-dashboard-surface: v2`, and a Safari user agent. The POST also sends `Content-Type: application/json` and `Origin: https://grok.com`.
+
+Weekly percent is `weeklyIncludedUsage.usedCents / budgetCents` (1160/16159 is 7.2%, shown as 7%, the same rounding as the dashboard). The reset date is `weeklyIncludedUsage.resetsAt`. `weeklyIncludedStatus.status` (for example `metered`) is shown as a small caption. Credit usage is `monthlyUsage.creditsUsedCents` in dollars. `monthlyUsage.usedCents` is shown beside it when the two differ. `limitCents` may be null.
+
+The daily query covers the current weekly period and at least 14 days, grouped by `product`, with `topN` 5. Headline totals are the sum of daily points inside the weekly period, labeled **This week**, so they are not the dashboard’s arbitrary chart range. The request omits `filters` so `totalTokens` can differ from `totalIncludedTokens`. If the server rejects that with HTTP 400 or 422, the provider retries `usageTypes: ["included", "on-demand"]` and then `["included"]`. The widget footnotes the filter it actually used. Product slugs map to Cursor, Grok Bot, Grok Tasks, Grok Chat, and Grok App Builder; anything else is title-cased, and the `other` bucket is included.
+
+Codable models match the captured samples in `Tests/GrokUsageKitTests/Fixtures/`. Costs are decimal strings. Token counts are `Int64`.
+
+`FixtureUsageProvider` returns the October dashboard screenshot (967.2M total, 874.7M included, $0.50 credit, 7% weekly, resets Nov 4) for previews and the widget gallery. The daily bars are a visual trace of that chart, not a captured payload.
+
+## Layout
+
+- `project.yml` — XcodeGen project. Shared schemes are **GrokWidgetApp** (runs the host app) and **GrokWidgetExtension** (WidgetKit preview)
+- `scripts/install.sh` — signed build, install to `/Applications`, open the app
+- `Sources/GrokUsageKit` — models, formatting, providers, Keychain, cache
+- `Sources/GrokUsageUI` — SwiftUI widget views
+- `Sources/GrokWidgetApp` — settings window and in-app sign-in
+- `Sources/GrokUsageWidget` — WidgetKit extension
+- `Sources/grok-usage-dump` — raw-JSON command
+- `Tests/GrokUsageKitTests` — formatting, decode, mapping, provider, and snapshot render tests

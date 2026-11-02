@@ -1,0 +1,21 @@
+{
+  "availability": "available",
+  "monthlyUsage": {
+    "usedCents": 0,
+    "limitCents": null,
+    "additionalUsageOff": false,
+    "creditsUsedCents": 0,
+    "periodStart": "2026-11-01T00:00:00.000Z",
+    "resetsAt": "2026-12-01T00:00:00.000Z"
+  },
+  "weeklyIncludedStatus": {
+    "status": "metered"
+  },
+  "weeklyIncludedUsage": {
+    "usedCents": 1160,
+    "budgetCents": 16159,
+    "resetCounter": 3,
+    "periodStart": "2026-10-28T13:10:28.938Z",
+    "resetsAt": "2026-11-04T13:10:28.938Z"
+  }
+}

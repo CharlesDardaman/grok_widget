@@ -1,0 +1,884 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0091248591B64C4673886E27 /* CookieHarvest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C16996EB5E01B8C89A2FDB /* CookieHarvest.swift */; };
+		035362E08CD3924552AA033C /* FixtureUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20F172DB5EE6907DF10046B /* FixtureUsageProvider.swift */; };
+		036206069B3F311115C8BE26 /* UsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2FA6DDE0BF14E2777998A3 /* UsageProvider.swift */; };
+		07B18DC87439BE1A11F34C6D /* UsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F817A71BFEEF0AD1011DD87E /* UsageCache.swift */; };
+		08179D1ADB43633D7CAEB120 /* DumpMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6508A6C3559DE53A68512B5 /* DumpMain.swift */; };
+		0BA72C18864F6DD35E5F5DC2 /* GrokWebUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8BEC62D3C30A01BA111B28 /* GrokWebUsageProvider.swift */; };
+		0E5B7830062597C11EC8D94B /* UsageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9EB01860DDBDB8AB9577BD2 /* UsageFormat.swift */; };
+		10CF850E427F63E2A18A8256 /* Previews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EDA01457704054F8348833F /* Previews.swift */; };
+		12529E6DE3255D9D49AE2FB5 /* ProjectConsistencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E68139478DD8D020B1B6DDCA /* ProjectConsistencyTests.swift */; };
+		14747B99ECCCBC0D138AC259 /* RawResponseDump.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8A442F57BF55F2EE6FF35 /* RawResponseDump.swift */; };
+		156477BC06DE1F0756CCA013 /* GrokUsageWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 232CDC4ED5E7E6282D816521 /* GrokUsageWidget.swift */; };
+		1A135AD9C31D0368CBF0E4E8 /* UsageModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099C82FC891A07A4CFBB9B2A /* UsageModels.swift */; };
+		1B059D87BD9BA8E3A3478525 /* UsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2FA6DDE0BF14E2777998A3 /* UsageProvider.swift */; };
+		2C72B7B09389409D80C6807B /* RawResponseDump.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8A442F57BF55F2EE6FF35 /* RawResponseDump.swift */; };
+		31752B1AB2D7B70994F93FC9 /* TokenChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036FC33662BE5E3E5F47AB02 /* TokenChart.swift */; };
+		3A446971A694F04B3F03163C /* FormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E58572E8155AEA4BBFD15BB /* FormatTests.swift */; };
+		3E222ACCAFF1E5F51AC3D013 /* UsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F817A71BFEEF0AD1011DD87E /* UsageCache.swift */; };
+		418E9646AF3D3ACD0BDA2339 /* UsageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F954862454011C5641C35E78 /* UsageLoader.swift */; };
+		43E9FA3FFD1D19832356ED49 /* CookieHarvest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C16996EB5E01B8C89A2FDB /* CookieHarvest.swift */; };
+		44F34B3D83D3BB1DF2FA4280 /* DashboardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FBD18E4055DDBDD784EAE5 /* DashboardModels.swift */; };
+		46470AF783798C9AFF72D8A3 /* SignInWebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3301FC8A86CDD971D4E75E32 /* SignInWebView.swift */; };
+		4F14F7F5095195EBEE996285 /* UsageWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7A220AF6C43BE51292296B /* UsageWindow.swift */; };
+		4FCD37668FFD3A279DB14527 /* UsageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9EB01860DDBDB8AB9577BD2 /* UsageFormat.swift */; };
+		5079E69D01623D02BE26A98D /* FixtureUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20F172DB5EE6907DF10046B /* FixtureUsageProvider.swift */; };
+		565E516CEAAD6D1E71B0E3AA /* daily_usage_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = 2039C5160A0FA13E52B02AB7 /* daily_usage_sample.json */; };
+		5BC6887A9CACA95DCAE32CE1 /* UsageErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6129230F1DBBF766987DBBF0 /* UsageErrors.swift */; };
+		5D9B814364BAC112CEA7FDFA /* SharedStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE27D6D7E51657A686B764 /* SharedStorage.swift */; };
+		5DF233EBEC1222708502074B /* UsageViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B211D371F247C5E27A74BD0B /* UsageViews.swift */; };
+		632165B8370169E3A9C9C6A2 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE7B530A155EA39F0847341F /* SettingsView.swift */; };
+		65A4B4CBE8506E7FEC4A5F2E /* UsageMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D03EBF77BCF601D2FF5D0D /* UsageMapping.swift */; };
+		676AD768CC84520497AF90AB /* GrokWidgetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EB4D23E88B794C585CF726 /* GrokWidgetApp.swift */; };
+		6A89109B1849756300AA0237 /* UsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F817A71BFEEF0AD1011DD87E /* UsageCache.swift */; };
+		6CCE02550B6F7F27DD7B3278 /* DashboardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FBD18E4055DDBDD784EAE5 /* DashboardModels.swift */; };
+		6E2FEBFD973102DCBFF8ED49 /* RenderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAA3FF3A4EDE62C18F7B3160 /* RenderTests.swift */; };
+		710E84F87F920949BE3B3511 /* UsageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9EB01860DDBDB8AB9577BD2 /* UsageFormat.swift */; };
+		71C6BEED5337E286E3844060 /* UsageModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099C82FC891A07A4CFBB9B2A /* UsageModels.swift */; };
+		729F2D0EC46D941983DC89FB /* SharedStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE27D6D7E51657A686B764 /* SharedStorage.swift */; };
+		753C859941A0892EDFD889BA /* UsageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F954862454011C5641C35E78 /* UsageLoader.swift */; };
+		763B5A8BF670AB2587536A51 /* CookieHarvest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C16996EB5E01B8C89A2FDB /* CookieHarvest.swift */; };
+		7A685AF1641A2CB83BD22D28 /* GrokWebUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8BEC62D3C30A01BA111B28 /* GrokWebUsageProvider.swift */; };
+		7AA7EBD6DC59E7611F37F757 /* KeychainCookieStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76ABACAABC280E05EA84BC3E /* KeychainCookieStore.swift */; };
+		7B90DEEF3E91AAFA6AB36BEF /* SharedStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE27D6D7E51657A686B764 /* SharedStorage.swift */; };
+		81E3A4576F982D4EB232FC88 /* DecodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6739750BEF806EE03497E68F /* DecodeTests.swift */; };
+		83C413FE225D6785F6B2DC74 /* UsageWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7A220AF6C43BE51292296B /* UsageWindow.swift */; };
+		849BE58BAC9778019B2471B8 /* TokenChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036FC33662BE5E3E5F47AB02 /* TokenChart.swift */; };
+		88BB802A117B25A6070F8A4E /* UsageMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D03EBF77BCF601D2FF5D0D /* UsageMapping.swift */; };
+		8E2BF770E4A152FD3BBEF191 /* UsageErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6129230F1DBBF766987DBBF0 /* UsageErrors.swift */; };
+		8FE6460170D4ECBF59559251 /* FixtureUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20F172DB5EE6907DF10046B /* FixtureUsageProvider.swift */; };
+		92C42D94E1C90358526E7E28 /* ProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3C80186AA170D0FCF4366850 /* ProviderTests.swift */; };
+		93E0D06BD2742CAFA04D3B67 /* UsageMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D03EBF77BCF601D2FF5D0D /* UsageMapping.swift */; };
+		947D7908657F5789CFB288D6 /* UsageViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B211D371F247C5E27A74BD0B /* UsageViews.swift */; };
+		97C35815DC23E6FA0719012E /* GrokWebUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8BEC62D3C30A01BA111B28 /* GrokWebUsageProvider.swift */; };
+		995C6D1543B5B2D65AA38B9F /* UsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2FA6DDE0BF14E2777998A3 /* UsageProvider.swift */; };
+		99DDEFCE00E829F2DD97C9D8 /* SharedStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03AE27D6D7E51657A686B764 /* SharedStorage.swift */; };
+		9D2E92C0C3CBB098E79CE26D /* UsageWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7A220AF6C43BE51292296B /* UsageWindow.swift */; };
+		9D47725E4564E033D553E79D /* UsageCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = F817A71BFEEF0AD1011DD87E /* UsageCache.swift */; };
+		9EF3CC9195A3BFC189E4D717 /* GrokWebUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C8BEC62D3C30A01BA111B28 /* GrokWebUsageProvider.swift */; };
+		A1A217C9F2E2B2D51B32B54A /* KeychainCookieStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76ABACAABC280E05EA84BC3E /* KeychainCookieStore.swift */; };
+		A2A16AD4307C10476C5C69C9 /* KeychainCookieStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76ABACAABC280E05EA84BC3E /* KeychainCookieStore.swift */; };
+		A2BF6D7B7467944B1689BA01 /* usage_status_sample.json in Resources */ = {isa = PBXBuildFile; fileRef = F1735CECFA16EB33DB227C85 /* usage_status_sample.json */; };
+		AA507112F1D888DDAEAC0FFE /* TokenChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 036FC33662BE5E3E5F47AB02 /* TokenChart.swift */; };
+		AD6D3128812B4C63BA2F6768 /* FixtureUsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = B20F172DB5EE6907DF10046B /* FixtureUsageProvider.swift */; };
+		B08203DB4A219665F47173EA /* UsageModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099C82FC891A07A4CFBB9B2A /* UsageModels.swift */; };
+		B1EA258AF7B36C2A2A225FBC /* UsageViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = B211D371F247C5E27A74BD0B /* UsageViews.swift */; };
+		B32997E69AF09E093BDB3DEC /* UsageProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B2FA6DDE0BF14E2777998A3 /* UsageProvider.swift */; };
+		BC61E038994851C3D8E18323 /* UsageErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6129230F1DBBF766987DBBF0 /* UsageErrors.swift */; };
+		C44E61FAA58180E153737106 /* MappingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04ACAA8AD123CBD31268E8B5 /* MappingTests.swift */; };
+		C476A22A76B018CEA3F8EADC /* UsageErrors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6129230F1DBBF766987DBBF0 /* UsageErrors.swift */; };
+		C4FC4DFEB3530BF61C089EA9 /* UsageWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A7A220AF6C43BE51292296B /* UsageWindow.swift */; };
+		CC5BD50155481CDCB758B158 /* TestSupport.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAC9A7092193F909E20AA12E /* TestSupport.swift */; };
+		D2CFAAE20863B7475C9AD93A /* RawResponseDump.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8A442F57BF55F2EE6FF35 /* RawResponseDump.swift */; };
+		D50301C15D8D8019A1F720C2 /* UsageModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 099C82FC891A07A4CFBB9B2A /* UsageModels.swift */; };
+		DDF412ADEA3EF721872E789B /* DashboardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FBD18E4055DDBDD784EAE5 /* DashboardModels.swift */; };
+		E4A80552D778108404EABE43 /* CookieHeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3184C4B02BA5158EBF9B12A /* CookieHeaderTests.swift */; };
+		E667FA95B8FE7678B2AF0892 /* RawResponseDump.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB8A442F57BF55F2EE6FF35 /* RawResponseDump.swift */; };
+		E6BA1F52D71B6B216263221E /* UsageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9EB01860DDBDB8AB9577BD2 /* UsageFormat.swift */; };
+		E81CFF444ECDD9905EFF4348 /* CookieHarvest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C16996EB5E01B8C89A2FDB /* CookieHarvest.swift */; };
+		EB87B790459574F3C41C11E7 /* DashboardModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14FBD18E4055DDBDD784EAE5 /* DashboardModels.swift */; };
+		EBC79ECE32DAB8E288775BC1 /* GrokUsageWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 5147C7A002E1EEA387CA5B70 /* GrokUsageWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		F263A3390457A16A9DB68D0E /* UsageMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02D03EBF77BCF601D2FF5D0D /* UsageMapping.swift */; };
+		F80AF8F2CD7809C9189A7A70 /* UsageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F954862454011C5641C35E78 /* UsageLoader.swift */; };
+		F8A78AFDF15D539B5928C644 /* UsageLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = F954862454011C5641C35E78 /* UsageLoader.swift */; };
+		FB43FBCF5CDFE67F5A3B2B94 /* KeychainCookieStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76ABACAABC280E05EA84BC3E /* KeychainCookieStore.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4DBF50FE257F36A3D085243F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2482EB136699DF17D65B3570 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 16B6D3015017AEB4CC11C200;
+			remoteInfo = GrokUsageWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		83A9B3905D759BEA5C447060 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				EBC79ECE32DAB8E288775BC1 /* GrokUsageWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		02D03EBF77BCF601D2FF5D0D /* UsageMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageMapping.swift; sourceTree = "<group>"; };
+		036FC33662BE5E3E5F47AB02 /* TokenChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenChart.swift; sourceTree = "<group>"; };
+		03AE27D6D7E51657A686B764 /* SharedStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStorage.swift; sourceTree = "<group>"; };
+		04ACAA8AD123CBD31268E8B5 /* MappingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MappingTests.swift; sourceTree = "<group>"; };
+		099C82FC891A07A4CFBB9B2A /* UsageModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageModels.swift; sourceTree = "<group>"; };
+		0EDA01457704054F8348833F /* Previews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Previews.swift; sourceTree = "<group>"; };
+		14FBD18E4055DDBDD784EAE5 /* DashboardModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardModels.swift; sourceTree = "<group>"; };
+		1A7A220AF6C43BE51292296B /* UsageWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageWindow.swift; sourceTree = "<group>"; };
+		2039C5160A0FA13E52B02AB7 /* daily_usage_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = daily_usage_sample.json; sourceTree = "<group>"; };
+		20EB4D23E88B794C585CF726 /* GrokWidgetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokWidgetApp.swift; sourceTree = "<group>"; };
+		232CDC4ED5E7E6282D816521 /* GrokUsageWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokUsageWidget.swift; sourceTree = "<group>"; };
+		2456B75DFF99C8EEABF8056D /* GrokUsageKitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GrokUsageKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		3301FC8A86CDD971D4E75E32 /* SignInWebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWebView.swift; sourceTree = "<group>"; };
+		3C80186AA170D0FCF4366850 /* ProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderTests.swift; sourceTree = "<group>"; };
+		3E58572E8155AEA4BBFD15BB /* FormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatTests.swift; sourceTree = "<group>"; };
+		45C16996EB5E01B8C89A2FDB /* CookieHarvest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieHarvest.swift; sourceTree = "<group>"; };
+		4B2FA6DDE0BF14E2777998A3 /* UsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageProvider.swift; sourceTree = "<group>"; };
+		5147C7A002E1EEA387CA5B70 /* GrokUsageWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GrokUsageWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E7E738D95CD9DFA95398CD6 /* grok-usage-dump */ = {isa = PBXFileReference; includeInIndex = 0; path = "grok-usage-dump"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6129230F1DBBF766987DBBF0 /* UsageErrors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageErrors.swift; sourceTree = "<group>"; };
+		6739750BEF806EE03497E68F /* DecodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DecodeTests.swift; sourceTree = "<group>"; };
+		76ABACAABC280E05EA84BC3E /* KeychainCookieStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainCookieStore.swift; sourceTree = "<group>"; };
+		7C8BEC62D3C30A01BA111B28 /* GrokWebUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GrokWebUsageProvider.swift; sourceTree = "<group>"; };
+		AE7B530A155EA39F0847341F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B20F172DB5EE6907DF10046B /* FixtureUsageProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixtureUsageProvider.swift; sourceTree = "<group>"; };
+		B211D371F247C5E27A74BD0B /* UsageViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageViews.swift; sourceTree = "<group>"; };
+		BAA3FF3A4EDE62C18F7B3160 /* RenderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderTests.swift; sourceTree = "<group>"; };
+		C5E6A452AD05A71DBC38011B /* GrokWidget.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GrokWidget.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CFB8A442F57BF55F2EE6FF35 /* RawResponseDump.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawResponseDump.swift; sourceTree = "<group>"; };
+		D6508A6C3559DE53A68512B5 /* DumpMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DumpMain.swift; sourceTree = "<group>"; };
+		D9EB01860DDBDB8AB9577BD2 /* UsageFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageFormat.swift; sourceTree = "<group>"; };
+		DAC9A7092193F909E20AA12E /* TestSupport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSupport.swift; sourceTree = "<group>"; };
+		E3CF9FA44BDC34159831B7BC /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		E68139478DD8D020B1B6DDCA /* ProjectConsistencyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectConsistencyTests.swift; sourceTree = "<group>"; };
+		F1735CECFA16EB33DB227C85 /* usage_status_sample.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = usage_status_sample.json; sourceTree = "<group>"; };
+		F3184C4B02BA5158EBF9B12A /* CookieHeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CookieHeaderTests.swift; sourceTree = "<group>"; };
+		F817A71BFEEF0AD1011DD87E /* UsageCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageCache.swift; sourceTree = "<group>"; };
+		F954862454011C5641C35E78 /* UsageLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageLoader.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		0E9E77A675AA2BCC988136A6 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				439600D79998BB7032D4B665 /* grok-usage-dump */,
+				DE9796783AA8AD56A2A7AED5 /* GrokUsageKit */,
+				82DFDA24B81409629E352E64 /* GrokUsageUI */,
+				5758D2CBEFB82DDE5BEE5601 /* GrokUsageWidget */,
+				A4BA648555682C48D5074473 /* GrokWidgetApp */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		388692328AD82FC1AF2D91CE /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				E3CF9FA44BDC34159831B7BC /* Signing.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		439600D79998BB7032D4B665 /* grok-usage-dump */ = {
+			isa = PBXGroup;
+			children = (
+				D6508A6C3559DE53A68512B5 /* DumpMain.swift */,
+			);
+			path = "grok-usage-dump";
+			sourceTree = "<group>";
+		};
+		54D7BA99ADEDCA7837835FAB /* GrokUsageKitTests */ = {
+			isa = PBXGroup;
+			children = (
+				B353DE7B29171F8C4BB63FE7 /* Fixtures */,
+				F3184C4B02BA5158EBF9B12A /* CookieHeaderTests.swift */,
+				6739750BEF806EE03497E68F /* DecodeTests.swift */,
+				3E58572E8155AEA4BBFD15BB /* FormatTests.swift */,
+				04ACAA8AD123CBD31268E8B5 /* MappingTests.swift */,
+				E68139478DD8D020B1B6DDCA /* ProjectConsistencyTests.swift */,
+				3C80186AA170D0FCF4366850 /* ProviderTests.swift */,
+				BAA3FF3A4EDE62C18F7B3160 /* RenderTests.swift */,
+				DAC9A7092193F909E20AA12E /* TestSupport.swift */,
+			);
+			path = GrokUsageKitTests;
+			sourceTree = "<group>";
+		};
+		5758D2CBEFB82DDE5BEE5601 /* GrokUsageWidget */ = {
+			isa = PBXGroup;
+			children = (
+				232CDC4ED5E7E6282D816521 /* GrokUsageWidget.swift */,
+				0EDA01457704054F8348833F /* Previews.swift */,
+			);
+			path = GrokUsageWidget;
+			sourceTree = "<group>";
+		};
+		642B62A76BA390005E94E1E5 = {
+			isa = PBXGroup;
+			children = (
+				388692328AD82FC1AF2D91CE /* Config */,
+				0E9E77A675AA2BCC988136A6 /* Sources */,
+				F883D540285BA3D8E9B2A3FB /* Tests */,
+				FFA71F119ACB3E0B4F2EEEDF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		82DFDA24B81409629E352E64 /* GrokUsageUI */ = {
+			isa = PBXGroup;
+			children = (
+				036FC33662BE5E3E5F47AB02 /* TokenChart.swift */,
+				B211D371F247C5E27A74BD0B /* UsageViews.swift */,
+			);
+			path = GrokUsageUI;
+			sourceTree = "<group>";
+		};
+		A4BA648555682C48D5074473 /* GrokWidgetApp */ = {
+			isa = PBXGroup;
+			children = (
+				20EB4D23E88B794C585CF726 /* GrokWidgetApp.swift */,
+				AE7B530A155EA39F0847341F /* SettingsView.swift */,
+				3301FC8A86CDD971D4E75E32 /* SignInWebView.swift */,
+			);
+			path = GrokWidgetApp;
+			sourceTree = "<group>";
+		};
+		B353DE7B29171F8C4BB63FE7 /* Fixtures */ = {
+			isa = PBXGroup;
+			children = (
+				2039C5160A0FA13E52B02AB7 /* daily_usage_sample.json */,
+				F1735CECFA16EB33DB227C85 /* usage_status_sample.json */,
+			);
+			path = Fixtures;
+			sourceTree = "<group>";
+		};
+		DE9796783AA8AD56A2A7AED5 /* GrokUsageKit */ = {
+			isa = PBXGroup;
+			children = (
+				45C16996EB5E01B8C89A2FDB /* CookieHarvest.swift */,
+				14FBD18E4055DDBDD784EAE5 /* DashboardModels.swift */,
+				B20F172DB5EE6907DF10046B /* FixtureUsageProvider.swift */,
+				7C8BEC62D3C30A01BA111B28 /* GrokWebUsageProvider.swift */,
+				76ABACAABC280E05EA84BC3E /* KeychainCookieStore.swift */,
+				CFB8A442F57BF55F2EE6FF35 /* RawResponseDump.swift */,
+				03AE27D6D7E51657A686B764 /* SharedStorage.swift */,
+				F817A71BFEEF0AD1011DD87E /* UsageCache.swift */,
+				6129230F1DBBF766987DBBF0 /* UsageErrors.swift */,
+				D9EB01860DDBDB8AB9577BD2 /* UsageFormat.swift */,
+				F954862454011C5641C35E78 /* UsageLoader.swift */,
+				02D03EBF77BCF601D2FF5D0D /* UsageMapping.swift */,
+				099C82FC891A07A4CFBB9B2A /* UsageModels.swift */,
+				4B2FA6DDE0BF14E2777998A3 /* UsageProvider.swift */,
+				1A7A220AF6C43BE51292296B /* UsageWindow.swift */,
+			);
+			path = GrokUsageKit;
+			sourceTree = "<group>";
+		};
+		F883D540285BA3D8E9B2A3FB /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				54D7BA99ADEDCA7837835FAB /* GrokUsageKitTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		FFA71F119ACB3E0B4F2EEEDF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				5E7E738D95CD9DFA95398CD6 /* grok-usage-dump */,
+				2456B75DFF99C8EEABF8056D /* GrokUsageKitTests.xctest */,
+				5147C7A002E1EEA387CA5B70 /* GrokUsageWidget.appex */,
+				C5E6A452AD05A71DBC38011B /* GrokWidget.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		15582B7AF59A386EFC20E073 /* GrokUsageKitTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9FAD58583F1AF57F5083880B /* Build configuration list for PBXNativeTarget "GrokUsageKitTests" */;
+			buildPhases = (
+				BE1EC2E5CE684628A5E3CA20 /* Sources */,
+				0F1FDB9FD5EF3DBBF1561E67 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GrokUsageKitTests;
+			packageProductDependencies = (
+			);
+			productName = GrokUsageKitTests;
+			productReference = 2456B75DFF99C8EEABF8056D /* GrokUsageKitTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		16B6D3015017AEB4CC11C200 /* GrokUsageWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 83568EE7B766F1DA041E2FFE /* Build configuration list for PBXNativeTarget "GrokUsageWidget" */;
+			buildPhases = (
+				39B5EC7EC63186629A11D68C /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = GrokUsageWidget;
+			packageProductDependencies = (
+			);
+			productName = GrokUsageWidget;
+			productReference = 5147C7A002E1EEA387CA5B70 /* GrokUsageWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		61DD3F5687AE0FAC51DACE77 /* GrokWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E2772F0E6D046E5819E2A9C1 /* Build configuration list for PBXNativeTarget "GrokWidget" */;
+			buildPhases = (
+				214F5FECF13B65B0084A682C /* Sources */,
+				83A9B3905D759BEA5C447060 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1FAF3D335C4B6E4BA0EA041C /* PBXTargetDependency */,
+			);
+			name = GrokWidget;
+			packageProductDependencies = (
+			);
+			productName = GrokWidget;
+			productReference = C5E6A452AD05A71DBC38011B /* GrokWidget.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8EC995BF34891E1961F86AC2 /* grok-usage-dump */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 36761C24F5D070FF2447AD6B /* Build configuration list for PBXNativeTarget "grok-usage-dump" */;
+			buildPhases = (
+				C4B94508FF50E07A2661FFE3 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "grok-usage-dump";
+			packageProductDependencies = (
+			);
+			productName = "grok-usage-dump";
+			productReference = 5E7E738D95CD9DFA95398CD6 /* grok-usage-dump */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2482EB136699DF17D65B3570 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					15582B7AF59A386EFC20E073 = {
+						DevelopmentTeam = "$(DEVELOPMENT_TEAM)";
+						ProvisioningStyle = Automatic;
+					};
+					16B6D3015017AEB4CC11C200 = {
+						DevelopmentTeam = "$(DEVELOPMENT_TEAM)";
+						ProvisioningStyle = Automatic;
+					};
+					61DD3F5687AE0FAC51DACE77 = {
+						DevelopmentTeam = "$(DEVELOPMENT_TEAM)";
+						ProvisioningStyle = Automatic;
+					};
+					8EC995BF34891E1961F86AC2 = {
+						DevelopmentTeam = "$(DEVELOPMENT_TEAM)";
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 38A27AA6B7420550DDDF5BD9 /* Build configuration list for PBXProject "GrokWidget" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 642B62A76BA390005E94E1E5;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = FFA71F119ACB3E0B4F2EEEDF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				61DD3F5687AE0FAC51DACE77 /* GrokWidget */,
+				16B6D3015017AEB4CC11C200 /* GrokUsageWidget */,
+				8EC995BF34891E1961F86AC2 /* grok-usage-dump */,
+				15582B7AF59A386EFC20E073 /* GrokUsageKitTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0F1FDB9FD5EF3DBBF1561E67 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				565E516CEAAD6D1E71B0E3AA /* daily_usage_sample.json in Resources */,
+				A2BF6D7B7467944B1689BA01 /* usage_status_sample.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		214F5FECF13B65B0084A682C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0091248591B64C4673886E27 /* CookieHarvest.swift in Sources */,
+				DDF412ADEA3EF721872E789B /* DashboardModels.swift in Sources */,
+				AD6D3128812B4C63BA2F6768 /* FixtureUsageProvider.swift in Sources */,
+				7A685AF1641A2CB83BD22D28 /* GrokWebUsageProvider.swift in Sources */,
+				676AD768CC84520497AF90AB /* GrokWidgetApp.swift in Sources */,
+				7AA7EBD6DC59E7611F37F757 /* KeychainCookieStore.swift in Sources */,
+				E667FA95B8FE7678B2AF0892 /* RawResponseDump.swift in Sources */,
+				632165B8370169E3A9C9C6A2 /* SettingsView.swift in Sources */,
+				5D9B814364BAC112CEA7FDFA /* SharedStorage.swift in Sources */,
+				46470AF783798C9AFF72D8A3 /* SignInWebView.swift in Sources */,
+				31752B1AB2D7B70994F93FC9 /* TokenChart.swift in Sources */,
+				9D47725E4564E033D553E79D /* UsageCache.swift in Sources */,
+				BC61E038994851C3D8E18323 /* UsageErrors.swift in Sources */,
+				0E5B7830062597C11EC8D94B /* UsageFormat.swift in Sources */,
+				753C859941A0892EDFD889BA /* UsageLoader.swift in Sources */,
+				F263A3390457A16A9DB68D0E /* UsageMapping.swift in Sources */,
+				B08203DB4A219665F47173EA /* UsageModels.swift in Sources */,
+				1B059D87BD9BA8E3A3478525 /* UsageProvider.swift in Sources */,
+				B1EA258AF7B36C2A2A225FBC /* UsageViews.swift in Sources */,
+				9D2E92C0C3CBB098E79CE26D /* UsageWindow.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		39B5EC7EC63186629A11D68C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				43E9FA3FFD1D19832356ED49 /* CookieHarvest.swift in Sources */,
+				EB87B790459574F3C41C11E7 /* DashboardModels.swift in Sources */,
+				8FE6460170D4ECBF59559251 /* FixtureUsageProvider.swift in Sources */,
+				156477BC06DE1F0756CCA013 /* GrokUsageWidget.swift in Sources */,
+				0BA72C18864F6DD35E5F5DC2 /* GrokWebUsageProvider.swift in Sources */,
+				A2A16AD4307C10476C5C69C9 /* KeychainCookieStore.swift in Sources */,
+				10CF850E427F63E2A18A8256 /* Previews.swift in Sources */,
+				2C72B7B09389409D80C6807B /* RawResponseDump.swift in Sources */,
+				729F2D0EC46D941983DC89FB /* SharedStorage.swift in Sources */,
+				849BE58BAC9778019B2471B8 /* TokenChart.swift in Sources */,
+				07B18DC87439BE1A11F34C6D /* UsageCache.swift in Sources */,
+				C476A22A76B018CEA3F8EADC /* UsageErrors.swift in Sources */,
+				710E84F87F920949BE3B3511 /* UsageFormat.swift in Sources */,
+				418E9646AF3D3ACD0BDA2339 /* UsageLoader.swift in Sources */,
+				88BB802A117B25A6070F8A4E /* UsageMapping.swift in Sources */,
+				1A135AD9C31D0368CBF0E4E8 /* UsageModels.swift in Sources */,
+				B32997E69AF09E093BDB3DEC /* UsageProvider.swift in Sources */,
+				947D7908657F5789CFB288D6 /* UsageViews.swift in Sources */,
+				C4FC4DFEB3530BF61C089EA9 /* UsageWindow.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		BE1EC2E5CE684628A5E3CA20 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E81CFF444ECDD9905EFF4348 /* CookieHarvest.swift in Sources */,
+				E4A80552D778108404EABE43 /* CookieHeaderTests.swift in Sources */,
+				6CCE02550B6F7F27DD7B3278 /* DashboardModels.swift in Sources */,
+				81E3A4576F982D4EB232FC88 /* DecodeTests.swift in Sources */,
+				035362E08CD3924552AA033C /* FixtureUsageProvider.swift in Sources */,
+				3A446971A694F04B3F03163C /* FormatTests.swift in Sources */,
+				97C35815DC23E6FA0719012E /* GrokWebUsageProvider.swift in Sources */,
+				A1A217C9F2E2B2D51B32B54A /* KeychainCookieStore.swift in Sources */,
+				C44E61FAA58180E153737106 /* MappingTests.swift in Sources */,
+				12529E6DE3255D9D49AE2FB5 /* ProjectConsistencyTests.swift in Sources */,
+				92C42D94E1C90358526E7E28 /* ProviderTests.swift in Sources */,
+				D2CFAAE20863B7475C9AD93A /* RawResponseDump.swift in Sources */,
+				6E2FEBFD973102DCBFF8ED49 /* RenderTests.swift in Sources */,
+				7B90DEEF3E91AAFA6AB36BEF /* SharedStorage.swift in Sources */,
+				CC5BD50155481CDCB758B158 /* TestSupport.swift in Sources */,
+				AA507112F1D888DDAEAC0FFE /* TokenChart.swift in Sources */,
+				3E222ACCAFF1E5F51AC3D013 /* UsageCache.swift in Sources */,
+				5BC6887A9CACA95DCAE32CE1 /* UsageErrors.swift in Sources */,
+				E6BA1F52D71B6B216263221E /* UsageFormat.swift in Sources */,
+				F8A78AFDF15D539B5928C644 /* UsageLoader.swift in Sources */,
+				93E0D06BD2742CAFA04D3B67 /* UsageMapping.swift in Sources */,
+				D50301C15D8D8019A1F720C2 /* UsageModels.swift in Sources */,
+				995C6D1543B5B2D65AA38B9F /* UsageProvider.swift in Sources */,
+				5DF233EBEC1222708502074B /* UsageViews.swift in Sources */,
+				4F14F7F5095195EBEE996285 /* UsageWindow.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C4B94508FF50E07A2661FFE3 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				763B5A8BF670AB2587536A51 /* CookieHarvest.swift in Sources */,
+				44F34B3D83D3BB1DF2FA4280 /* DashboardModels.swift in Sources */,
+				08179D1ADB43633D7CAEB120 /* DumpMain.swift in Sources */,
+				5079E69D01623D02BE26A98D /* FixtureUsageProvider.swift in Sources */,
+				9EF3CC9195A3BFC189E4D717 /* GrokWebUsageProvider.swift in Sources */,
+				FB43FBCF5CDFE67F5A3B2B94 /* KeychainCookieStore.swift in Sources */,
+				14747B99ECCCBC0D138AC259 /* RawResponseDump.swift in Sources */,
+				99DDEFCE00E829F2DD97C9D8 /* SharedStorage.swift in Sources */,
+				6A89109B1849756300AA0237 /* UsageCache.swift in Sources */,
+				8E2BF770E4A152FD3BBEF191 /* UsageErrors.swift in Sources */,
+				4FCD37668FFD3A279DB14527 /* UsageFormat.swift in Sources */,
+				F80AF8F2CD7809C9189A7A70 /* UsageLoader.swift in Sources */,
+				65A4B4CBE8506E7FEC4A5F2E /* UsageMapping.swift in Sources */,
+				71C6BEED5337E286E3844060 /* UsageModels.swift in Sources */,
+				036206069B3F311115C8BE26 /* UsageProvider.swift in Sources */,
+				83C413FE225D6785F6B2DC74 /* UsageWindow.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		1FAF3D335C4B6E4BA0EA041C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 16B6D3015017AEB4CC11C200 /* GrokUsageWidget */;
+			targetProxy = 4DBF50FE257F36A3D085243F /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1F9E73475304B57A39D8365F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/GrokWidgetApp/GrokWidget.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/InfoAdditions.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Grok Widget";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.charlesdardaman.grok-widget";
+				PRODUCT_NAME = GrokWidget;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		2A499A17FD6EB9E593D39155 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.charlesdardaman.grok-widget.tests";
+				SDKROOT = macosx;
+				TEST_HOST = "";
+			};
+			name = Debug;
+		};
+		2CF8C678F6A44D667FC53459 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Sources/grok-usage-dump/grok-usage-dump.entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/InfoAdditions.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.charlesdardaman.grok-widget.dump";
+				PRODUCT_NAME = "grok-usage-dump";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		3EE6D3E3972D060FC8E79E26 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = Sources/GrokUsageWidget/GrokUsageWidget.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Sources/GrokUsageWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.charlesdardaman.grok-widget.widget";
+				PRODUCT_NAME = GrokUsageWidget;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		59ECF948C2CDCCEAB3DD8EFA /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E3CF9FA44BDC34159831B7BC /* Signing.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		978973F7A47668CC427AABB6 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = Sources/GrokUsageWidget/GrokUsageWidget.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Sources/GrokUsageWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.charlesdardaman.grok-widget.widget";
+				PRODUCT_NAME = GrokUsageWidget;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		AA777B95725F821440A9C8CF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Sources/GrokWidgetApp/GrokWidget.entitlements;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/InfoAdditions.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Grok Widget";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.charlesdardaman.grok-widget";
+				PRODUCT_NAME = GrokWidget;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		BE55B874AED25A38765FD827 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E3CF9FA44BDC34159831B7BC /* Signing.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = nonisolated;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C922FB17B582E933DB652EDD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Sources/grok-usage-dump/grok-usage-dump.entitlements";
+				COMBINE_HIDPI_IMAGES = YES;
+				CREATE_INFOPLIST_SECTION_IN_BINARY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Config/InfoAdditions.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.charlesdardaman.grok-widget.dump";
+				PRODUCT_NAME = "grok-usage-dump";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		EFB7C269DB78917296605077 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.charlesdardaman.grok-widget.tests";
+				SDKROOT = macosx;
+				TEST_HOST = "";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		36761C24F5D070FF2447AD6B /* Build configuration list for PBXNativeTarget "grok-usage-dump" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2CF8C678F6A44D667FC53459 /* Debug */,
+				C922FB17B582E933DB652EDD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		38A27AA6B7420550DDDF5BD9 /* Build configuration list for PBXProject "GrokWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				BE55B874AED25A38765FD827 /* Debug */,
+				59ECF948C2CDCCEAB3DD8EFA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		83568EE7B766F1DA041E2FFE /* Build configuration list for PBXNativeTarget "GrokUsageWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				978973F7A47668CC427AABB6 /* Debug */,
+				3EE6D3E3972D060FC8E79E26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9FAD58583F1AF57F5083880B /* Build configuration list for PBXNativeTarget "GrokUsageKitTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2A499A17FD6EB9E593D39155 /* Debug */,
+				EFB7C269DB78917296605077 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E2772F0E6D046E5819E2A9C1 /* Build configuration list for PBXNativeTarget "GrokWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1F9E73475304B57A39D8365F /* Debug */,
+				AA777B95725F821440A9C8CF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2482EB136699DF17D65B3570 /* Project object */;
+}

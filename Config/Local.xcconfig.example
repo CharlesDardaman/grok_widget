@@ -1,0 +1,8 @@
+// Copy this file to Config/Local.xcconfig (gitignored) and set your team.
+//
+// The Team ID is the 10-character string in Xcode → Settings → Accounts →
+// your Apple ID → Team. A personal team works. Example:
+//
+//   DEVELOPMENT_TEAM = ABCDE12345
+//
+DEVELOPMENT_TEAM = ABCDE12345

@@ -1,0 +1,77 @@
+{
+  "availability": "available",
+  "startTime": "2026-11-01T00:00:00.000Z",
+  "endTime": "2026-11-02T00:00:00.000Z",
+  "totalContractedCost": "0.0000000000",
+  "totalTokens": 33000466,
+  "totalIncludedTokens": 33000466,
+  "series": [
+    {
+      "dimensions": {
+        "product": "cursor"
+      },
+      "costRank": 1,
+      "tokenRank": 3,
+      "totalContractedCost": "0.0000000000",
+      "totalTokens": 67043,
+      "totalIncludedTokens": 67043,
+      "points": [
+        {
+          "dayStartTime": "2026-11-01T00:00:00.000Z",
+          "contractedCost": "0.0000000000",
+          "tokens": 67043,
+          "includedTokens": 67043
+        }
+      ]
+    },
+    {
+      "dimensions": {
+        "product": "grok-bot"
+      },
+      "costRank": 2,
+      "tokenRank": 1,
+      "totalContractedCost": "0.0000000000",
+      "totalTokens": 32427034,
+      "totalIncludedTokens": 32427034,
+      "points": [
+        {
+          "dayStartTime": "2026-11-01T00:00:00.000Z",
+          "contractedCost": "0.0000000000",
+          "tokens": 32427034,
+          "includedTokens": 32427034
+        }
+      ]
+    },
+    {
+      "dimensions": {
+        "product": "grok-tasks"
+      },
+      "costRank": 3,
+      "tokenRank": 2,
+      "totalContractedCost": "0.0000000000",
+      "totalTokens": 506389,
+      "totalIncludedTokens": 506389,
+      "points": [
+        {
+          "dayStartTime": "2026-11-01T00:00:00.000Z",
+          "contractedCost": "0.0000000000",
+          "tokens": 506389,
+          "includedTokens": 506389
+        }
+      ]
+    }
+  ],
+  "other": {
+    "totalContractedCost": "0.0000000000",
+    "totalTokens": 0,
+    "totalIncludedTokens": 0,
+    "points": [
+      {
+        "dayStartTime": "2026-11-01T00:00:00.000Z",
+        "contractedCost": "0.0000000000",
+        "tokens": 0,
+        "includedTokens": 0
+      }
+    ]
+  }
+}
