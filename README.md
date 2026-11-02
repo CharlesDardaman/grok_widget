@@ -18,13 +18,15 @@ export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 
 ## Install
 
-This is the recommended path. It builds the host app (the window with **Sign in to grok.com**), installs it to `/Applications`, opens it, and restarts Notification Center so the widget gallery sees the new extension.
+This is the recommended path. It builds the host app, removes the previous copy, installs the new one to `/Applications`, and restarts the widget process.
 
 ```bash
 ./scripts/install.sh
 ```
 
-The script needs full Xcode and `Config/Local.xcconfig` with your real `DEVELOPMENT_TEAM`. It stops with a clear error if that file or the team is missing, and it does not print the team ID. It quits a running copy with `killall`, copies the app to `/Applications`, registers it with Launch Services, and opens it with `open`. When it finishes, click **Sign in to grok.com**, then on the desktop right-click, choose **Edit Widgets**, and add **Grok Usage**. `open grokwidget://sign-in` opens the same sign-in sheet.
+The script needs full Xcode and `Config/Local.xcconfig` with your real `DEVELOPMENT_TEAM`. It stops with a clear error if that file or the team is missing, and it does not print the team ID. Before it copies the new app it quits Grok Widget with `pkill -x`, unregisters the old widget extension, unregisters every `GrokWidget.app` Launch Services entry it finds under `/Applications`, Xcode DerivedData, and this repo's `build` directory, deletes `/Applications/GrokWidget.app`, and restarts `chronod` and Notification Center so the old desktop widget disappears. It then registers only the `/Applications` copy, launches it once, and reloads widgets. The Keychain session is kept. `./scripts/install.sh --clean` also deletes that session and the App Group data.
+
+When it finishes, add the widget again: on the desktop, right-click, choose **Edit Widgets**, and add **Grok Usage**. `open grokwidget://sign-in` opens the sign-in sheet.
 
 In Xcode, run the **GrokWidgetApp** scheme. **GrokWidgetExtension** only opens the WidgetKit preview. It is not the sign-in app.
 
@@ -75,7 +77,9 @@ xcodebuild -project GrokWidget.xcodeproj -scheme GrokWidgetApp -destination 'pla
 
 Google’s sign-in page sometimes refuses an embedded web view with “This browser or app may not be secure” (`disallowed_useragent`). The web view sets a desktop Safari user agent, because that check is mostly the user-agent string and the default WKWebView agent is rejected. That workaround often succeeds on macOS, including a verification code that stays on the page, but Google does not support embedded web views and can still refuse. X or email inside the same window is the other path. This was not confirmed against a live Google account here.
 
-**Sign in needed** and **Session expired** use `grokwidget://sign-in`, which brings the window forward and opens the sign-in sheet. Every other state, including a stale reading and every widget size, uses `grokwidget://open-usage`. The app opens `https://grok.com/dashboard/usage` in the default browser and does not leave its own window in front. The app first re-reads cookies from the persistent web view store and probes `usage-status` when the sign-in link is opened. If that succeeds, the Keychain is updated and the widget reloads. If it fails, the sheet stays open. A successful sign-in also reloads widget timelines immediately.
+**Sign in needed** and **Session expired** use `grokwidget://sign-in`, which brings the window forward and opens the sign-in sheet. Every other state, including a stale reading and every widget size, sets the widget link to `https://grok.com/dashboard/usage`. macOS opens that in the default browser and does not launch this app. A custom-scheme link only launches the app, which is why a signed-in click used to show the Grok Usage window. The app first re-reads cookies from the persistent web view store and probes `usage-status` when the sign-in link is opened. If that succeeds, the Keychain is updated and the widget reloads. If it fails, the sheet stays open. A successful sign-in also reloads widget timelines immediately.
+
+If a signed-in desktop click still opens the Grok Usage window, the desktop is showing a widget cached from an older copy. Run `./scripts/install.sh` again, then add **Grok Usage** from **Edit Widgets**. Several registered copies of the app, or a timeline saved before the link changed, cause that click to launch the app with no URL.
 
 The timeline refreshes about every 15 minutes. Signing in, saving, or clearing the cookie reloads it immediately. The widget shows the time it last fetched, a stale or error banner when a refresh fails, and an unavailable state when `availability` is not `available`.
 

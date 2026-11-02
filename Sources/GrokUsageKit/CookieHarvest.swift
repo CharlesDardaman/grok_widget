@@ -90,15 +90,28 @@ enum AppLink {
         isAppLink(url) && url.host?.lowercased() == "open-usage"
     }
 
+    static func isDashboard(_ url: URL) -> Bool {
+        url.scheme?.lowercased() == "https"
+            && url.host?.lowercased() == "grok.com"
+            && url.path == "/dashboard/usage"
+    }
+
+    /// A signed-in click should open the browser. On macOS, WidgetKit does that
+    /// for an https widgetURL. A custom scheme only launches the containing app,
+    /// which is what a desktop click was doing.
+    static func opensDashboard(_ url: URL) -> Bool {
+        isOpenUsage(url) || isDashboard(url)
+    }
+
     /// Sign-in needed and an expired session open the sign-in sheet.
-    /// Every other state, including stale, asks the app to open the dashboard
-    /// in the default browser. One link covers every widget size.
+    /// Every other state, including stale, opens the dashboard in the browser.
+    /// One link covers every widget size.
     static func widgetURL(for presentation: UsagePresentation) -> URL {
         switch presentation {
         case .needsCookie, .sessionExpired:
             return signIn
         case .fresh, .stale, .loading, .unavailable, .failed:
-            return openUsage
+            return dashboard
         }
     }
 }

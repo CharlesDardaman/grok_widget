@@ -66,7 +66,11 @@ final class ProjectConsistencyTests: XCTestCase {
         XCTAssertFalse(app.contains("System Events"))
 
         let install = try String(contentsOf: root.appendingPathComponent("scripts/install.sh"), encoding: .utf8)
-        XCTAssertTrue(install.contains("killall GrokWidget"))
+        XCTAssertTrue(install.contains("pkill -x GrokWidget"))
+        XCTAssertTrue(install.contains("pluginkit -r"))
+        XCTAssertTrue(install.contains("lsregister\" -u"))
+        XCTAssertTrue(install.contains("killall chronod"))
+        XCTAssertTrue(install.contains("--clean"))
         XCTAssertTrue(install.contains("open \"$dest\""))
         XCTAssertFalse(install.contains("osascript"))
         XCTAssertFalse(install.contains("System Events"))

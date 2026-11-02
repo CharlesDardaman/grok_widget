@@ -72,13 +72,13 @@ final class SignInCoordinator: ObservableObject {
     private var lastLinkAt: [String: Date] = [:]
 
     func handle(_ url: URL) async {
-        guard AppLink.isAppLink(url) else { return }
+        guard AppLink.isAppLink(url) || AppLink.isDashboard(url) else { return }
         let key = url.absoluteString.lowercased()
         if let last = lastLinkAt[key], Date().timeIntervalSince(last) < 1 {
             return
         }
         lastLinkAt[key] = Date()
-        if AppLink.isOpenUsage(url) {
+        if AppLink.opensDashboard(url) {
             DashboardBrowser.openUsage()
             return
         }
@@ -197,9 +197,9 @@ final class GrokWidgetAppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func accept(_ urls: [URL]) {
-        for url in urls where AppLink.isAppLink(url) && !pendingURLs.contains(url) {
+        for url in urls where (AppLink.isAppLink(url) || AppLink.isDashboard(url)) && !pendingURLs.contains(url) {
             pendingURLs.append(url)
-            if AppLink.isOpenUsage(url) {
+            if AppLink.opensDashboard(url) {
                 opensDashboard = true
                 DashboardBrowser.openUsage()
             }

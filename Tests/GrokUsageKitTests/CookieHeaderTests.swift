@@ -168,8 +168,9 @@ final class CookieHeaderTests: XCTestCase {
         XCTAssertEqual(AppLink.widgetURL(for: .sessionExpired), signIn)
         for presentation in [UsagePresentation.fresh, .stale, .loading, .unavailable, .failed("offline")] {
             let link = AppLink.widgetURL(for: presentation)
-            XCTAssertEqual(link, AppLink.openUsage)
-            XCTAssertEqual(link.absoluteString, "grokwidget://open-usage")
+            XCTAssertEqual(link, AppLink.dashboard)
+            XCTAssertEqual(link.absoluteString, "https://grok.com/dashboard/usage")
+            XCTAssertTrue(AppLink.opensDashboard(link))
             XCTAssertFalse(AppLink.isSignIn(link))
         }
     }
