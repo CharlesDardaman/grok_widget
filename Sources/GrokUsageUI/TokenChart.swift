@@ -41,6 +41,13 @@ enum ChartSeries {
         return days
     }
 
+    /// Tokens on the last UTC day of the chart window. That day is the chart's
+    /// last bar, including a day the series reports with no points. An empty
+    /// window is 0. `limit` is ignored so a shorter chart still agrees.
+    static func tokensToday(in snapshot: UsageSnapshot) -> Int64 {
+        days(in: snapshot, limit: nil).last?.total ?? 0
+    }
+
     static func legend(for days: [ChartDay]) -> [ChartSegment] {
         var totals: [String: Int64] = [:]
         for day in days {

@@ -43,13 +43,15 @@ struct UsageWidgetView: View {
     var entry: UsageEntry
 
     var body: some View {
+        // No extra padding. Content margins stay enabled so WidgetKit insets
+        // this view by `widgetContentMargins`, which clears the corner at
+        // every family. A fixed 12pt pad sat inside that radius.
         UsageWidgetRoot(
             family: size(for: family),
             snapshot: entry.snapshot,
             presentation: entry.presentation,
             now: entry.date
         )
-        .padding(12)
     }
 
     private func size(for family: WidgetFamily) -> UsageWidgetSize {
@@ -74,7 +76,6 @@ struct GrokUsageWidget: Widget {
         .configurationDisplayName("Grok Usage")
         .description("Weekly included usage, token totals, and tokens per day from grok.com.")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
-        .contentMarginsDisabled()
     }
 }
 

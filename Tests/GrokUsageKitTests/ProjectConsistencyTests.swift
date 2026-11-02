@@ -51,6 +51,8 @@ final class ProjectConsistencyTests: XCTestCase {
         XCTAssertFalse(signIn.contains("WKWebsiteDataStore.default()"))
         XCTAssertTrue(widget.contains(".widgetURL(AppLink.widgetURL(for: entry.presentation))"))
         XCTAssertFalse(widget.contains("widgetURL(entry.presentation == .sessionExpired"))
+        XCTAssertFalse(widget.contains("contentMarginsDisabled"))
+        XCTAssertFalse(widget.contains(".padding(12)"))
         let info = try String(contentsOf: root.appendingPathComponent("Config/InfoAdditions.plist"), encoding: .utf8)
         XCTAssertTrue(info.contains("grokwidget"))
         let links = try String(contentsOf: root.appendingPathComponent("Sources/GrokUsageKit/CookieHarvest.swift"), encoding: .utf8)

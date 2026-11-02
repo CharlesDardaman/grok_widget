@@ -43,9 +43,9 @@ struct UsageSnapshot: Codable, Equatable, Sendable {
     var additionalUsageOff: Bool
     var totalTokens: Int64
     var includedTokens: Int64
-    /// `monthlyUsage.usedCents`. Shown when it differs from credit usage.
+    /// `monthlyUsage.usedCents`. Kept on the model; the summary line still includes credit.
     var monthlyUsedCents: Int
-    /// `monthlyUsage.creditsUsedCents`. Primary "Credit usage" dollar amount.
+    /// `monthlyUsage.creditsUsedCents`. Kept on the model; the summary line still includes credit.
     var creditsUsedCents: Int
     var monthlyLimitCents: Int?
     /// Short label for the totals, such as "This week" or "Oct 1 – Oct 31".

@@ -8,9 +8,10 @@ import SwiftUI
         presentation: .fresh,
         now: UsageSnapshot.screenshotFetchedAt
     )
-    .padding(12)
+    .padding(WidgetPreviewChrome.margin)
     .frame(width: 162, height: 162)
     .background(Color(nsColor: .windowBackgroundColor))
+    .clipShape(RoundedRectangle(cornerRadius: WidgetPreviewChrome.cornerRadius, style: .continuous))
 }
 
 #Preview("Medium") {
@@ -20,9 +21,10 @@ import SwiftUI
         presentation: .fresh,
         now: UsageSnapshot.screenshotFetchedAt
     )
-    .padding(12)
+    .padding(WidgetPreviewChrome.margin)
     .frame(width: 344, height: 162)
     .background(Color(nsColor: .windowBackgroundColor))
+    .clipShape(RoundedRectangle(cornerRadius: WidgetPreviewChrome.cornerRadius, style: .continuous))
 }
 
 #Preview("Large") {
@@ -32,9 +34,10 @@ import SwiftUI
         presentation: .fresh,
         now: UsageSnapshot.screenshotFetchedAt
     )
-    .padding(12)
+    .padding(WidgetPreviewChrome.margin)
     .frame(width: 344, height: 344)
     .background(Color(nsColor: .windowBackgroundColor))
+    .clipShape(RoundedRectangle(cornerRadius: WidgetPreviewChrome.cornerRadius, style: .continuous))
 }
 
 #Preview("Session expired") {
@@ -44,9 +47,10 @@ import SwiftUI
         presentation: .sessionExpired,
         now: UsageSnapshot.screenshotFetchedAt
     )
-    .padding(12)
+    .padding(WidgetPreviewChrome.margin)
     .frame(width: 344, height: 162)
     .background(Color(nsColor: .windowBackgroundColor))
+    .clipShape(RoundedRectangle(cornerRadius: WidgetPreviewChrome.cornerRadius, style: .continuous))
 }
 
 #Preview("Cookie needed") {
@@ -56,7 +60,8 @@ import SwiftUI
         presentation: .needsCookie,
         now: Date()
     )
-    .padding(12)
+    .padding(WidgetPreviewChrome.margin)
     .frame(width: 162, height: 162)
     .background(Color(nsColor: .windowBackgroundColor))
+    .clipShape(RoundedRectangle(cornerRadius: WidgetPreviewChrome.cornerRadius, style: .continuous))
 }

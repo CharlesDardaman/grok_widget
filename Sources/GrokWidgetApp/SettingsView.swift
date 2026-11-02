@@ -141,12 +141,12 @@ struct SettingsView: View {
                 presentation: previewPresentation,
                 now: previewSnapshot?.fetchedAt ?? Date()
             )
-            .padding(12)
+            .padding(WidgetPreviewChrome.margin)
             .frame(width: previewSize.previewSize.width, height: previewSize.previewSize.height)
             .background(Color(nsColor: .windowBackgroundColor))
-            .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: WidgetPreviewChrome.cornerRadius, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 22, style: .continuous)
+                RoundedRectangle(cornerRadius: WidgetPreviewChrome.cornerRadius, style: .continuous)
                     .stroke(Color.primary.opacity(0.08))
             )
             Text("Add it from the desktop: right-click, Edit Widgets, then Grok Usage. macOS refreshes the timeline about every 15 minutes. Signing in reloads it. A session-expired widget opens this app.")
