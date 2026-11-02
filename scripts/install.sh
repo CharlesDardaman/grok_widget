@@ -1,11 +1,30 @@
 #!/bin/bash
-# Build the host app with the team in Config/Local.xcconfig, install it to
-# /Applications, and refresh the widget gallery. Does not print the team ID.
+# Build the host app with the team in Config/Local.xcconfig, replace any
+# older install, and refresh the widget gallery. Does not print the team ID.
+# Quits with pkill and launches with open.
+#
+# ./scripts/install.sh
+#     Replaces the app and widget. Keeps the Keychain session and App Group.
+# ./scripts/install.sh --clean
+#     Also deletes the Keychain session and App Group data.
 
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$root"
+
+clean=0
+if [[ $# -gt 1 ]]; then
+  echo "error: too many arguments." >&2
+  exit 1
+fi
+if [[ $# -eq 1 ]]; then
+  if [[ "$1" != "--clean" ]]; then
+    echo "error: unknown argument: $1 (expected --clean)." >&2
+    exit 1
+  fi
+  clean=1
+fi
 
 is_full_xcode() {
   local path="${1:-}"
@@ -79,26 +98,156 @@ if [[ ! -d "$app" ]]; then
   exit 1
 fi
 
+lsregister="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
+dest="/Applications/GrokWidget.app"
+candidates="$(mktemp)"
+trap 'rm -f "$candidates"' EXIT
+
+add_candidate() {
+  local path="$1"
+  [[ -n "$path" ]] || return 0
+  path="${path%/}"
+  if [[ "$(basename "$path")" != "GrokWidget.app" ]]; then
+    return 0
+  fi
+  printf '%s\n' "$path" >> "$candidates"
+}
+
+echo "Uninstalling the previous Grok Widget."
+
+echo "Quitting GrokWidget."
 if pgrep -x GrokWidget >/dev/null 2>&1; then
-  killall GrokWidget || true
+  pkill -x GrokWidget || true
   for _ in 1 2 3 4 5 6 7 8 9 10; do
     pgrep -x GrokWidget >/dev/null 2>&1 || break
     sleep 0.2
   done
+else
+  echo "GrokWidget is not running."
 fi
 
-dest="/Applications/GrokWidget.app"
-rm -rf "$dest"
-ditto "$app" "$dest"
-echo "Installed $dest"
-open "$dest"
+if [[ -d /Applications ]]; then
+  add_candidate "$dest"
+fi
+if [[ -d "$HOME/Library/Developer/Xcode/DerivedData" ]]; then
+  while IFS= read -r found; do
+    add_candidate "$found"
+  done < <(find "$HOME/Library/Developer/Xcode/DerivedData" -name 'GrokWidget.app' -type d -prune 2>/dev/null || true)
+fi
+if [[ -d "$root/build" ]]; then
+  while IFS= read -r found; do
+    add_candidate "$found"
+  done < <(find "$root/build" -name 'GrokWidget.app' -type d -prune 2>/dev/null || true)
+fi
+if [[ -x "$lsregister" ]]; then
+  while IFS= read -r found; do
+    add_candidate "$found"
+  done < <("$lsregister" -dump 2>/dev/null | sed -n 's/^path:[[:space:]]*//p' | sed -E 's/ \(0x[0-9a-fA-F]+\)$//' || true)
+fi
 
-# Notification Center caches the widget gallery. Restarting it picks up the new extension.
+echo "Unregistering widget extensions."
+unregistered_plugin=0
+if [[ -s "$candidates" ]]; then
+  while IFS= read -r found; do
+    appex="$found/Contents/PlugIns/GrokUsageWidget.appex"
+    if [[ -d "$appex" ]]; then
+      echo "pluginkit -r $appex"
+      pluginkit -r "$appex" || true
+      unregistered_plugin=1
+    fi
+  done < <(sort -u "$candidates")
+fi
+if [[ "$unregistered_plugin" -eq 0 ]]; then
+  echo "No Grok Usage widget extension was registered."
+fi
+
+echo "Unregistering Launch Services copies."
+unregistered_app=0
+if [[ -x "$lsregister" && -s "$candidates" ]]; then
+  while IFS= read -r found; do
+    echo "lsregister -u $found"
+    "$lsregister" -u "$found" || true
+    unregistered_app=1
+  done < <(sort -u "$candidates")
+fi
+if [[ "$unregistered_app" -eq 0 ]]; then
+  echo "No GrokWidget.app Launch Services entries were found."
+fi
+
+echo "Removing $dest."
+if [[ -d "$dest" ]]; then
+  rm -rf "$dest"
+  echo "Removed $dest."
+else
+  echo "$dest is already gone."
+fi
+
+echo "Restarting chronod and Notification Center so the old widget leaves the desktop."
+killall chronod || true
 killall NotificationCenter || true
 
-cat <<'EOF'
+if [[ "$clean" -eq 1 ]]; then
+  echo "Removing the Keychain session and App Group data."
+  security delete-generic-password -s "com.charlesdardaman.grok-widget" -a "dashboard-session-cookie" >/dev/null 2>&1 || true
+  rm -rf "$HOME/Library/Group Containers/group.com.charlesdardaman.grok-widget"
+  rm -rf "$HOME/Library/Containers/com.charlesdardaman.grok-widget"
+  rm -rf "$HOME/Library/Containers/com.charlesdardaman.grok-widget.widget"
+else
+  echo "Keeping the Keychain session and App Group data."
+fi
 
-Next:
-1. In the Grok Widget window, click Sign in to grok.com.
-2. On the desktop, right-click, choose Edit Widgets, and add Grok Usage.
+echo "Installing $dest."
+ditto "$app" "$dest"
+build_number="$(plutil -extract CFBundleVersion raw "$dest/Contents/Info.plist" 2>/dev/null || echo unknown)"
+echo "Installed $dest (build $build_number)."
+
+echo "Registering $dest."
+if [[ -x "$lsregister" ]]; then
+  "$lsregister" -f "$dest" || true
+fi
+new_appex="$dest/Contents/PlugIns/GrokUsageWidget.appex"
+if [[ -d "$new_appex" ]]; then
+  echo "pluginkit -a $new_appex"
+  pluginkit -a "$new_appex" || true
+  echo "pluginkit -e use -i com.charlesdardaman.grok-widget.widget"
+  pluginkit -e use -i com.charlesdardaman.grok-widget.widget || true
+fi
+
+echo "Launching Grok Widget."
+open "$dest"
+
+echo "Reloading widgets."
+killall chronod || true
+killall NotificationCenter || true
+
+echo "Checking that only $dest stayed registered."
+: > "$candidates"
+if [[ -x "$lsregister" ]]; then
+  while IFS= read -r found; do
+    add_candidate "$found"
+  done < <("$lsregister" -dump 2>/dev/null | sed -n 's/^path:[[:space:]]*//p' | sed -E 's/ \(0x[0-9a-fA-F]+\)$//' || true)
+  if [[ -s "$candidates" ]]; then
+    while IFS= read -r found; do
+      if [[ "$found" != "$dest" ]]; then
+        echo "lsregister -u $found"
+        "$lsregister" -u "$found" || true
+        stale_appex="$found/Contents/PlugIns/GrokUsageWidget.appex"
+        if [[ -d "$stale_appex" ]]; then
+          echo "pluginkit -r $stale_appex"
+          pluginkit -r "$stale_appex" || true
+        fi
+      fi
+    done < <(sort -u "$candidates")
+  fi
+fi
+
+cat <<EOF
+
+The previous widget was removed. You may need to add it again: on the desktop, right-click, choose Edit Widgets, and add Grok Usage.
+A signed-in widget opens https://grok.com/dashboard/usage in the browser. Sign in needed and Session expired open this app.
 EOF
+if [[ "$clean" -eq 1 ]]; then
+  echo "The Keychain session and App Group data were deleted."
+else
+  echo "The Keychain session was kept. ./scripts/install.sh --clean also deletes that session and the App Group data."
+fi
