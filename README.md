@@ -24,7 +24,7 @@ This is the recommended path. It builds the host app, removes the previous copy,
 ./scripts/install.sh
 ```
 
-The script needs full Xcode and `Config/Local.xcconfig` with your real `DEVELOPMENT_TEAM`. It stops with a clear error if that file or the team is missing, and it does not print the team ID. Before it copies the new app it quits Grok Widget with `pkill -x`, unregisters the old widget extension, unregisters every `GrokWidget.app` Launch Services entry it finds under `/Applications`, Xcode DerivedData, and this repo's `build` directory, deletes `/Applications/GrokWidget.app`, and restarts `chronod` and Notification Center so the old desktop widget disappears. It then registers only the `/Applications` copy, launches it once, and reloads widgets. The Keychain session is kept. `./scripts/install.sh --clean` also deletes that session and the App Group data.
+The script needs full Xcode and `Config/Local.xcconfig` with your real `DEVELOPMENT_TEAM`. It stops with a clear error if that file or the team is missing, and it does not print the team ID. A free Apple Development profile expires after 7 days; `make install-resign-agent` renews the installed app before that. See [Renew the free-team signature](#renew-the-free-team-signature). Before it copies the new app it quits Grok Widget with `pkill -x`, unregisters the old widget extension, unregisters every `GrokWidget.app` Launch Services entry it finds under `/Applications`, Xcode DerivedData, and this repo's `build` directory, deletes `/Applications/GrokWidget.app`, and restarts `chronod` and Notification Center so the old desktop widget disappears. It then registers only the `/Applications` copy, launches it once, and reloads widgets. The Keychain session is kept. `./scripts/install.sh --clean` also deletes that session and the App Group data.
 
 When it finishes, add the widget again: on the desktop, right-click, choose **Edit Widgets**, and add **Grok Usage**. `open grokwidget://sign-in` opens the sign-in sheet.
 
@@ -64,6 +64,44 @@ export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
 xcodebuild -project GrokWidget.xcodeproj -scheme GrokWidgetApp -destination 'platform=macOS' -configuration Debug CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=- build
 xcodebuild -project GrokWidget.xcodeproj -scheme GrokWidgetApp -destination 'platform=macOS' -configuration Debug CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=- test
 ```
+
+## Renew the free-team signature
+
+A free Apple Development profile lasts 7 days. The app and the widget need one because they use the app group and the keychain access group. `scripts/resign.sh` keeps `/Applications/GrokWidget.app` signed with that team. It does not drop those entitlements.
+
+On a normal run the script does not build. It rebuilds the **GrokWidgetApp** Release scheme with `xcodebuild -allowProvisioningUpdates` only when one of these is true:
+
+- `codesign --verify --deep --strict` fails for `/Applications/GrokWidget.app`
+- the embedded profile on the app or on `GrokUsageWidget.appex` is missing, already expired, or expires within 3 days
+
+Automatic signing uses the team in `Config/Local.xcconfig`. Xcode has to already be signed in to the Apple ID (Xcode > Settings > Accounts). The script cannot complete a sign-in prompt. After a build it checks the signature, checks that both embedded profiles expire in the future, and checks that the app group and keychain access group are still present. It quits Grok Widget, swaps the new bundle into `/Applications/GrokWidget.app`, launches it, and re-registers the widget with `pluginkit` so WidgetKit uses the new signature.
+
+Each run appends to `~/Library/Logs/GrokWidget/resign.log`, including the new expiry date when it installs a profile.
+
+A user LaunchAgent runs that check every day at 9:15 local time and again at login. `StartCalendarInterval` also runs the missed check after the Mac wakes from sleep. The agent stores this checkout's path, so run the install again if you move the repo:
+
+```bash
+make install-resign-agent
+```
+
+Remove it with:
+
+```bash
+make uninstall-resign-agent
+```
+
+That deletes `~/Library/LaunchAgents/com.charlesdardaman.grok-widget.resign.plist` and unloads the agent. The app and the log stay where they are.
+
+If a re-sign fails, or the installed profile expires within 48 hours and that run did not install a new one, the script posts a macOS notification. Each of those two situations is sent at most once per day. The banner tells you to open Xcode > Settings > Accounts and sign back in, then run `scripts/resign.sh --force`, and it includes `~/Library/Logs/GrokWidget/resign.log`. `terminal-notifier` is used when it is installed; otherwise the script uses `osascript`.
+
+```bash
+./scripts/resign.sh --force                 # rebuild now
+./scripts/resign.sh --check                 # report only; does not modify the app
+./scripts/resign.sh --simulate-failure      # post the failure notification, do not build
+./scripts/resign.sh --simulate-expiring     # post the 48-hour notification, do not build
+```
+
+`GROK_RESIGN_SIMULATE=failure` and `GROK_RESIGN_SIMULATE=expiring` do the same thing as the simulate flags.
 
 ## Run and add the widget
 
@@ -106,6 +144,9 @@ Codable models match the captured samples in `Tests/GrokUsageKitTests/Fixtures/`
 
 - `project.yml` — XcodeGen project. Shared schemes are **GrokWidgetApp** (runs the host app) and **GrokWidgetExtension** (WidgetKit preview)
 - `scripts/install.sh` — signed build, install to `/Applications`, open the app
+- `scripts/resign.sh` — refresh the free-team signature when it is near expiry
+- `scripts/install-resign-agent.sh` — install or remove the daily LaunchAgent
+- `Makefile` — `install-resign-agent` and `uninstall-resign-agent`
 - `Sources/GrokUsageKit` — models, formatting, providers, Keychain, cache
 - `Sources/GrokUsageUI` — SwiftUI widget views
 - `Sources/GrokWidgetApp` — settings window and in-app sign-in

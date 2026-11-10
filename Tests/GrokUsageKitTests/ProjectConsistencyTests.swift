@@ -1,3 +1,4 @@
+import Foundation
 import XCTest
 
 final class ProjectConsistencyTests: XCTestCase {
@@ -76,5 +77,53 @@ final class ProjectConsistencyTests: XCTestCase {
         XCTAssertTrue(install.contains("open \"$dest\""))
         XCTAssertFalse(install.contains("osascript"))
         XCTAssertFalse(install.contains("System Events"))
+    }
+
+    func testResignKeepsTheFreeTeamProfileFresh() throws {
+        let root = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+            .deletingLastPathComponent()
+        let resign = try String(contentsOf: root.appendingPathComponent("scripts/resign.sh"), encoding: .utf8)
+        let agent = try String(contentsOf: root.appendingPathComponent("scripts/install-resign-agent.sh"), encoding: .utf8)
+        let makefile = try String(contentsOf: root.appendingPathComponent("Makefile"), encoding: .utf8)
+        let readme = try String(contentsOf: root.appendingPathComponent("README.md"), encoding: .utf8)
+
+        XCTAssertTrue(resign.contains("-allowProvisioningUpdates"))
+        XCTAssertTrue(resign.contains("codesign --verify --deep --strict"))
+        XCTAssertTrue(resign.contains("ExpirationDate"))
+        XCTAssertTrue(resign.contains("pluginkit -a"))
+        XCTAssertTrue(resign.contains("display notification"))
+        XCTAssertTrue(resign.contains("group.com.charlesdardaman.grok-widget"))
+        XCTAssertTrue(resign.contains("com.charlesdardaman.grok-widget.shared"))
+        XCTAssertTrue(resign.contains("--simulate-failure"))
+        XCTAssertTrue(resign.contains("--simulate-expiring"))
+        XCTAssertFalse(resign.contains("pluginkit -r"))
+
+        XCTAssertTrue(agent.contains("com.charlesdardaman.grok-widget.resign"))
+        XCTAssertTrue(agent.contains("StartCalendarInterval"))
+        XCTAssertTrue(agent.contains("RunAtLoad"))
+        XCTAssertTrue(agent.contains("--uninstall"))
+        XCTAssertTrue(agent.contains("Library/LaunchAgents"))
+
+        XCTAssertTrue(makefile.contains("install-resign-agent:"))
+        XCTAssertTrue(makefile.contains("uninstall-resign-agent:"))
+        XCTAssertTrue(readme.contains("make install-resign-agent"))
+        XCTAssertTrue(readme.contains("make uninstall-resign-agent"))
+        XCTAssertTrue(readme.contains("within 3 days"))
+        XCTAssertTrue(readme.contains("within 48 hours"))
+        XCTAssertTrue(readme.contains("~/Library/Logs/GrokWidget/resign.log"))
+
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/bin/bash")
+        process.arguments = [root.appendingPathComponent("scripts/resign.sh").path, "--self-test"]
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = pipe
+        try process.run()
+        process.waitUntilExit()
+        let text = String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+        XCTAssertEqual(process.terminationStatus, 0, text)
+        XCTAssertTrue(text.contains("self-test ok"), text)
     }
 }
