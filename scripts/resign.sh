@@ -1,17 +1,22 @@
 #!/bin/bash
 # Rebuild /Applications/GrokWidget.app when its free-team profile is expired,
 # inside 3 days of expiry, or the signature no longer verifies. A successful
-# run replaces the app only after codesign and both embedded profiles check
-# out, then launches it and re-registers the widget extension.
+# run replaces the app only when both new profiles are strictly later than
+# the installed ones, or more than 3 days from now. It then launches the app
+# and re-registers the widget extension.
 #
 #   ./scripts/resign.sh                 # daily check (what the LaunchAgent runs)
 #   ./scripts/resign.sh --force         # rebuild even if the profile is still fresh
 #   ./scripts/resign.sh --check         # print the decision; do not build or notify
 #   ./scripts/resign.sh --simulate-failure
 #   ./scripts/resign.sh --simulate-expiring
-#   GROK_RESIGN_SIMULATE=failure|expiring ./scripts/resign.sh
+#   ./scripts/resign.sh --simulate-stale-profile
+#   ./scripts/resign.sh --simulate-stuck-previous
+#   GROK_RESIGN_SIMULATE=failure|expiring|stale-profile|stuck-previous ./scripts/resign.sh
 #
-# Simulations post the real notification text and do not modify the app.
+# Failure and expiring simulations post the real notification text.
+# The stale-profile and stuck-previous simulations only exercise those guards.
+# None of them modify the installed app.
 # Each failure type is posted at most once per local day.
 # Log: ~/Library/Logs/GrokWidget/resign.log
 
@@ -46,11 +51,13 @@ RENEWED=0
 
 usage() {
   cat <<EOF
-Usage: ./scripts/resign.sh [--check | --force | --simulate-failure | --simulate-expiring]
+Usage: ./scripts/resign.sh [--check | --force | --simulate-failure | --simulate-expiring | --simulate-stale-profile | --simulate-stuck-previous]
 
 Rebuilds the Release app when /Applications/GrokWidget.app fails
 codesign --verify --deep --strict, or its embedded profile expires within
-3 days. --force always rebuilds. --check only reports the decision.
+3 days. The new profiles must be strictly later than the installed ones,
+or more than 3 days from now, before the app is replaced. --force always
+rebuilds. --check only reports the decision.
 EOF
 }
 
@@ -433,10 +440,25 @@ profile_expiration() {
 }
 
 recover_partial_swap() {
-  local previous="/Applications/GrokWidget.app.previous"
-  if [[ ! -d "$DEST" && -d "$previous" ]]; then
-    log "restoring $previous because $DEST is missing"
-    mv "$previous" "$DEST"
+  local note backup
+  note="$(backup_note_path)"
+  backup=""
+  if [[ -f "$note" ]]; then
+    backup="$(cat "$note" 2>/dev/null || true)"
+  fi
+  if [[ -d "$DEST" ]] && restored_bundle_ok "$DEST"; then
+    rm -f "$note"
+    return 0
+  fi
+  if [[ -n "$backup" && -d "$backup" ]]; then
+    log "installed app is missing or invalid; restoring the backup recorded at $note"
+    restore_verified_backup "$backup" || log "recorded backup was not restored"
+    return 0
+  fi
+  backup="$(legacy_previous_path)"
+  if [[ -d "$backup" ]]; then
+    log "installed app is missing or invalid; trying leftover $backup"
+    restore_verified_backup "$backup" || log "leftover $backup is not a valid bundle and was left in place"
   fi
 }
 
@@ -491,6 +513,264 @@ profiles_in_future() {
   app_epoch="$(iso_to_epoch "$app_iso")"
   appex_epoch="$(iso_to_epoch "$appex_iso")"
   [[ "$app_epoch" -gt "$now" && "$appex_epoch" -gt "$now" ]]
+}
+
+# One side counts as renewed when its new expiry is outside the 3-day window,
+# or, inside that window, strictly later than the installed expiry.
+one_expiry_renewed() {
+  local new_iso="$1"
+  local old_iso="$2"
+  local now="$3"
+  local new_epoch old_epoch left
+  [[ -n "$new_iso" ]] || return 1
+  new_epoch="$(iso_to_epoch "$new_iso")"
+  left=$((new_epoch - now))
+  if [[ "$left" -gt "$RENEW_WITHIN_SECONDS" ]]; then
+    return 0
+  fi
+  if [[ -n "$old_iso" ]]; then
+    old_epoch="$(iso_to_epoch "$old_iso")"
+    if [[ "$new_epoch" -gt "$old_epoch" ]]; then
+      return 0
+    fi
+  fi
+  return 1
+}
+
+renewal_decision() {
+  local new_app="$1"
+  local new_appex="$2"
+  local old_app="$3"
+  local old_appex="$4"
+  local now="$5"
+  if one_expiry_renewed "$new_app" "$old_app" "$now" && one_expiry_renewed "$new_appex" "$old_appex" "$now"; then
+    printf 'renewed\n'
+  else
+    printf 'rejected\n'
+  fi
+}
+
+built_profiles_renewed() {
+  local decision
+  decision="$(renewal_decision "$APP_EXPIRY" "$APPEX_EXPIRY" "$INSTALLED_APP_EXPIRY" "$INSTALLED_APPEX_EXPIRY" "$(date -u "+%s")")"
+  [[ "$decision" == "renewed" ]]
+}
+
+# 0: signature, entitlements, future profiles, and a real renewal.
+# 2: usable signature whose expiry did not move far enough.
+# 1: not installable.
+prepare_built_app() {
+  local built="$1"
+  local appex="$built/Contents/PlugIns/GrokUsageWidget.appex"
+  local built_team=""
+  if [[ ! -d "$built" || ! -d "$appex" ]]; then
+    log "build finished without $built"
+    return 1
+  fi
+  if ! signature_ok "$built"; then
+    log "built app failed codesign --verify --deep --strict"
+    return 1
+  fi
+  if ! profiles_in_future "$built"; then
+    log "built profiles are missing or not in the future (app ${APP_EXPIRY:-missing}, appex ${APPEX_EXPIRY:-missing})"
+    return 1
+  fi
+  if ! entitlements_ok "$built" || ! entitlements_ok "$appex"; then
+    log "built app or widget is missing the app group or keychain access group"
+    return 1
+  fi
+  built_team="$(team_of "$built")"
+  if [[ -z "$built_team" || "$built_team" != "$TEAM" ]]; then
+    log "built app is not signed for the selected development team"
+    return 1
+  fi
+  if built_profiles_renewed; then
+    log "built profiles renew the installed expiry; app $APP_EXPIRY (was ${INSTALLED_APP_EXPIRY:-none}); appex $APPEX_EXPIRY (was ${INSTALLED_APPEX_EXPIRY:-none})"
+    return 0
+  fi
+  log "built profiles do not extend the installed expiry; app $APP_EXPIRY (was ${INSTALLED_APP_EXPIRY:-none}); appex $APPEX_EXPIRY (was ${INSTALLED_APPEX_EXPIRY:-none})"
+  return 2
+}
+
+clear_cached_profiles() {
+  local dir f decoded
+  local dirs=(
+    "${HOME}/Library/Developer/Xcode/UserData/Provisioning Profiles"
+    "${HOME}/Library/MobileDevice/Provisioning Profiles"
+  )
+  for dir in "${dirs[@]}"; do
+    [[ -d "$dir" ]] || continue
+    for f in "$dir"/*.provisionprofile "$dir"/*.mobileprovision; do
+      [[ -f "$f" ]] || continue
+      decoded="$(security cms -D -i "$f" 2>/dev/null || true)"
+      if printf '%s\n' "$decoded" | grep -q 'com.charlesdardaman.grok-widget'; then
+        rm -f "$f"
+        log "removed cached provisioning profile $(basename "$f")"
+      fi
+    done
+  done
+  if [[ -d "$root/build/DerivedData" ]]; then
+    while IFS= read -r f; do
+      [[ -n "$f" ]] || continue
+      rm -f "$f"
+      log "removed derived provisioning profile $(basename "$f")"
+    done < <(find "$root/build/DerivedData" \( -name 'embedded.provisionprofile' -o -name '*.provisionprofile' -o -name '*.mobileprovision' \) -type f 2>/dev/null || true)
+  fi
+}
+
+bundle_layout_ok() {
+  local app="$1"
+  [[ -d "$app" ]] || return 1
+  [[ -f "$app/Contents/Info.plist" ]] || return 1
+  [[ -e "$app/Contents/MacOS/GrokWidget" && ! -d "$app/Contents/MacOS/GrokWidget" ]] || return 1
+  [[ ! -d "$app/GrokWidget.app" ]] || return 1
+  return 0
+}
+
+restored_bundle_ok() {
+  local app="$1"
+  bundle_layout_ok "$app" || return 1
+  if [[ -f "$app/Contents/embedded.provisionprofile" ]]; then
+    signature_ok "$app" || return 1
+  fi
+  return 0
+}
+
+move_onto_absent_path() {
+  local src="$1"
+  local dest="$2"
+  if [[ -e "$dest" ]]; then
+    log "refusing to move $src onto existing $dest"
+    return 1
+  fi
+  mv "$src" "$dest"
+}
+
+remove_tree() {
+  local path="$1"
+  local _i
+  [[ -n "$path" ]] || return 1
+  for _i in 1 2 3 4 5; do
+    if [[ ! -e "$path" ]]; then
+      return 0
+    fi
+    rm -rf "$path" 2>/dev/null || true
+    if [[ ! -e "$path" ]]; then
+      return 0
+    fi
+    sleep 0.2
+  done
+  return 1
+}
+
+legacy_previous_path() {
+  printf '%s' "$(dirname "$DEST")/GrokWidget.app.previous"
+}
+
+backup_note_path() {
+  printf '%s' "$(dirname "$DEST")/.GrokWidget.resign-backup"
+}
+
+delete_list_path() {
+  printf '%s' "$(dirname "$DEST")/.GrokWidget.resign-delete"
+}
+
+clear_legacy_previous() {
+  local previous
+  previous="$(legacy_previous_path)"
+  if [[ ! -e "$previous" ]]; then
+    return 0
+  fi
+  if remove_tree "$previous"; then
+    log "removed leftover $previous"
+    return 0
+  fi
+  log "could not remove leftover $previous; leaving $DEST unchanged"
+  return 1
+}
+
+cleanup_old_backups() {
+  local list note_path parent line tmp
+  parent="$(dirname "$DEST")"
+  list="$(delete_list_path)"
+  note_path=""
+  if [[ -f "$(backup_note_path)" ]]; then
+    note_path="$(cat "$(backup_note_path)" 2>/dev/null || true)"
+  fi
+  [[ -f "$list" ]] || return 0
+  tmp="$(mktemp "${TMPDIR:-/tmp}/grok-resign-delete.XXXXXX")"
+  while IFS= read -r line || [[ -n "$line" ]]; do
+    [[ -n "$line" ]] || continue
+    if [[ -n "$note_path" && "$line" == "$note_path" ]]; then
+      printf '%s\n' "$line" >> "$tmp"
+      continue
+    fi
+    case "$line" in
+      "$parent"/GrokWidget.app.previous*|"$parent"/GrokWidget.app.invalid*)
+        if [[ "$line" == "$DEST" ]]; then
+          printf '%s\n' "$line" >> "$tmp"
+          continue
+        fi
+        if remove_tree "$line"; then
+          log "removed old backup $line"
+        else
+          printf '%s\n' "$line" >> "$tmp"
+        fi
+        ;;
+      *)
+        log "ignoring unexpected backup path $line"
+        ;;
+    esac
+  done < "$list"
+  if [[ -s "$tmp" ]]; then
+    mv "$tmp" "$list"
+  else
+    rm -f "$tmp" "$list"
+  fi
+}
+
+remember_deletable_backup() {
+  local path="$1"
+  [[ -n "$path" ]] || return 0
+  printf '%s\n' "$path" >> "$(delete_list_path)"
+}
+
+restore_verified_backup() {
+  local backup="$1"
+  local note junk parent
+  parent="$(dirname "$DEST")"
+  note="$(backup_note_path)"
+  if [[ ! -d "$backup" ]]; then
+    log "no backup at $backup to restore"
+    return 1
+  fi
+  if ! bundle_layout_ok "$backup"; then
+    log "backup $backup is not a valid app bundle; leaving it in place"
+    return 1
+  fi
+  if [[ -e "$DEST" ]]; then
+    junk="$parent/GrokWidget.app.invalid.$$.${RANDOM}"
+    if [[ -e "$junk" ]]; then
+      log "cannot quarantine $DEST; backup remains at $backup"
+      return 1
+    fi
+    if ! move_onto_absent_path "$DEST" "$junk"; then
+      log "cannot move invalid $DEST aside; backup remains at $backup"
+      return 1
+    fi
+    remember_deletable_backup "$junk"
+  fi
+  if ! move_onto_absent_path "$backup" "$DEST"; then
+    log "could not move $backup back to $DEST"
+    return 1
+  fi
+  if ! restored_bundle_ok "$DEST"; then
+    log "restored $DEST failed validation"
+    return 1
+  fi
+  rm -f "$note"
+  log "restored a valid bundle at $DEST"
+  return 0
 }
 
 classify_failure() {
@@ -605,23 +885,6 @@ reload_widget() {
   log "reloaded chronod so the widget extension is the newly signed copy"
 }
 
-remove_previous() {
-  local previous="/Applications/GrokWidget.app.previous"
-  local _i
-  for _i in 1 2 3 4 5; do
-    if [[ ! -e "$previous" ]]; then
-      return 0
-    fi
-    if rm -rf "$previous"; then
-      return 0
-    fi
-    sleep 0.4
-  done
-  if [[ -e "$previous" ]]; then
-    log "could not delete $previous yet; the next run will remove it"
-  fi
-}
-
 launch_host() {
   local err=""
   local lsregister="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
@@ -648,9 +911,10 @@ launch_host() {
 
 install_built_app() {
   local built="$1"
-  local previous="/Applications/GrokWidget.app.previous"
   local appex=""
   local built_team=""
+  local parent=""
+  local backup=""
   appex="$built/Contents/PlugIns/GrokUsageWidget.appex"
   if [[ ! -d "$built" || ! -d "$appex" ]]; then
     log "build finished without $built"
@@ -664,6 +928,10 @@ install_built_app() {
     log "built profiles are missing or not in the future (app ${APP_EXPIRY:-missing}, appex ${APPEX_EXPIRY:-missing}); leaving $DEST unchanged"
     return 1
   fi
+  if ! built_profiles_renewed; then
+    log "refusing to install profiles that do not extend the installed expiry; leaving $DEST unchanged"
+    return 1
+  fi
   if ! entitlements_ok "$built" || ! entitlements_ok "$appex"; then
     log "built app or widget is missing the app group or keychain access group; leaving $DEST unchanged"
     return 1
@@ -675,25 +943,42 @@ install_built_app() {
   fi
   log "built app verified; app profile expiry $APP_EXPIRY; appex profile expiry $APPEX_EXPIRY"
 
-  stage_dir="$(mktemp -d /Applications/.GrokWidget.resign.XXXXXX)"
+  parent="$(dirname "$DEST")"
+  # A stuck GrokWidget.app.previous must fail here, before the live app moves.
+  if ! clear_legacy_previous; then
+    return 1
+  fi
+
+  stage_dir="$(mktemp -d "$parent/.GrokWidget.resign.XXXXXX")"
   ditto "$built" "$stage_dir/GrokWidget.app"
-  if ! signature_ok "$stage_dir/GrokWidget.app" || ! profiles_in_future "$stage_dir/GrokWidget.app"; then
+  if ! signature_ok "$stage_dir/GrokWidget.app" || ! profiles_in_future "$stage_dir/GrokWidget.app" || ! built_profiles_renewed; then
     log "staged copy failed verification; leaving $DEST unchanged"
     return 1
   fi
 
   quit_host
-  remove_previous
+  backup="$(mktemp "$parent/GrokWidget.app.previous.XXXXXX")"
+  rm -f "$backup"
+  if [[ -e "$backup" ]]; then
+    log "could not reserve backup path $backup; leaving $DEST unchanged"
+    return 1
+  fi
+  printf '%s\n' "$backup" > "$(backup_note_path)"
   if [[ -d "$DEST" ]]; then
-    if ! mv "$DEST" "$previous"; then
-      log "could not move $DEST aside"
+    if ! move_onto_absent_path "$DEST" "$backup"; then
+      rm -f "$(backup_note_path)"
+      log "could not move $DEST aside; leaving the installed app in place"
       return 1
     fi
   fi
-  if ! mv "$stage_dir/GrokWidget.app" "$DEST"; then
+  if ! move_onto_absent_path "$stage_dir/GrokWidget.app" "$DEST"; then
     log "could not move the new app into place; restoring the previous copy"
-    if [[ -d "$previous" && ! -d "$DEST" ]]; then
-      mv "$previous" "$DEST" || log "restore of the previous app failed"
+    if [[ -d "$backup" ]]; then
+      if restore_verified_backup "$backup"; then
+        launch_host || log "restored app did not relaunch"
+      else
+        log "restore of the previous app failed"
+      fi
     fi
     return 1
   fi
@@ -704,22 +989,68 @@ install_built_app() {
     xattr -dr com.apple.quarantine "$DEST" || true
     log "cleared quarantine on $DEST"
   fi
-  if ! signature_ok "$DEST" || ! profiles_in_future "$DEST"; then
+  if ! signature_ok "$DEST" || ! profiles_in_future "$DEST" || ! restored_bundle_ok "$DEST"; then
     log "installed app failed verification; restoring the previous copy"
-    rm -rf "$DEST"
-    if [[ -d "$previous" ]]; then
-      mv "$previous" "$DEST" || log "restore of the previous app failed"
+    if [[ -d "$backup" ]]; then
+      if restore_verified_backup "$backup"; then
+        launch_host || log "restored app did not relaunch"
+      else
+        log "restore of the previous app failed"
+      fi
+    else
+      rm -rf "$DEST"
+      rm -f "$(backup_note_path)"
+      log "removed the failed install; there was no previous app to restore"
     fi
     return 1
+  fi
+  rm -f "$(backup_note_path)"
+  if [[ -d "$backup" ]]; then
+    remember_deletable_backup "$backup"
   fi
   log "installed $DEST; new app profile expiry $APP_EXPIRY; new appex profile expiry $APPEX_EXPIRY"
   return 0
 }
 
-rebuild() {
-  local built="$root/build/DerivedData/Build/Products/Release/GrokWidget.app"
+run_release_build() {
   local build_status=0
   local reason=""
+  log "Building GrokWidgetApp (Release) with automatic signing ($*)."
+  set +e
+  run_with_timeout "$BUILD_TIMEOUT_SECONDS" \
+    "$DEVELOPER_DIR/usr/bin/xcodebuild" \
+    -project "$root/GrokWidget.xcodeproj" \
+    -scheme GrokWidgetApp \
+    -destination 'platform=macOS' \
+    -configuration Release \
+    -derivedDataPath "$root/build/DerivedData" \
+    -allowProvisioningUpdates \
+    DEVELOPMENT_TEAM="$TEAM" \
+    "$@"
+  build_status=$?
+  set -e
+  if [[ "$build_status" -ne 0 ]]; then
+    reason="$(classify_failure "$build_log")"
+    if [[ "$build_status" -eq 124 ]]; then
+      reason="timeout"
+    fi
+    log "xcodebuild exited $build_status ($reason); leaving $DEST unchanged"
+    finish_failure "$reason"
+  fi
+}
+
+assess_built() {
+  local prep=0
+  set +e
+  prepare_built_app "$1"
+  prep=$?
+  set -e
+  printf '%s' "$prep"
+}
+
+rebuild() {
+  local built="$root/build/DerivedData/Build/Products/Release/GrokWidget.app"
+  local prep=""
   on_exit_reason="build"
   if ! ensure_xcode; then
     finish_failure account
@@ -731,29 +1062,23 @@ rebuild() {
     log "No Apple Development identity is in the login keychain. Open Xcode > Settings > Accounts and sign back in."
     finish_failure account
   fi
-  log "Building GrokWidgetApp (Release) with automatic signing."
-  set +e
-  run_with_timeout "$BUILD_TIMEOUT_SECONDS" \
-    "$DEVELOPER_DIR/usr/bin/xcodebuild" \
-    -project "$root/GrokWidget.xcodeproj" \
-    -scheme GrokWidgetApp \
-    -destination 'platform=macOS' \
-    -configuration Release \
-    -derivedDataPath "$root/build/DerivedData" \
-    -allowProvisioningUpdates \
-    DEVELOPMENT_TEAM="$TEAM" \
-    build
-  build_status=$?
-  set -e
-  if [[ "$build_status" -ne 0 ]]; then
-    reason="$(classify_failure "$build_log")"
-    if [[ "$build_status" -eq 124 ]]; then
-      reason="timeout"
-    fi
-    log "xcodebuild exited $build_status ($reason); leaving $DEST unchanged"
-    finish_failure "$reason"
-  fi
+  run_release_build build
   on_exit_reason="account"
+  prep="$(assess_built "$built")"
+  if [[ "$prep" -eq 2 ]]; then
+    log "clearing cached provisioning profiles and rebuilding once"
+    clear_cached_profiles
+    run_release_build clean build
+    prep="$(assess_built "$built")"
+  fi
+  if [[ "$prep" -eq 2 ]]; then
+    log "rebuilt profiles still do not extend the installed expiry; leaving $DEST unchanged"
+    finish_failure account
+  fi
+  if [[ "$prep" -ne 0 ]]; then
+    log "built app is not installable; leaving $DEST unchanged"
+    finish_failure account
+  fi
   if ! install_built_app "$built"; then
     finish_failure account
   fi
@@ -764,7 +1089,7 @@ rebuild() {
     finish_failure launch
   fi
   reload_widget
-  remove_previous
+  cleanup_old_backups
   on_exit_reason=""
   log "re-sign complete; new expiry app $APP_EXPIRY; appex $APPEX_EXPIRY"
 }
@@ -776,6 +1101,8 @@ parse_args() {
       --check) CHECK=1 ;;
       --simulate-failure) SIMULATE="failure" ;;
       --simulate-expiring) SIMULATE="expiring" ;;
+      --simulate-stale-profile) SIMULATE="stale-profile" ;;
+      --simulate-stuck-previous) SIMULATE="stuck-previous" ;;
       -h|--help)
         usage
         exit 0
@@ -796,12 +1123,108 @@ parse_args() {
     case "$GROK_RESIGN_SIMULATE" in
       failure|fail) SIMULATE="failure" ;;
       expiring|expiring-soon) SIMULATE="expiring" ;;
+      stale-profile) SIMULATE="stale-profile" ;;
+      stuck-previous) SIMULATE="stuck-previous" ;;
       *)
-        echo "error: GROK_RESIGN_SIMULATE must be failure or expiring." >&2
+        echo "error: GROK_RESIGN_SIMULATE must be failure, expiring, stale-profile, or stuck-previous." >&2
         exit 1
         ;;
     esac
   fi
+}
+
+make_fake_app() {
+  local app="$1"
+  mkdir -p "$app/Contents/MacOS"
+  printf '%s\n' '<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd"><plist version="1.0"><dict></dict></plist>' > "$app/Contents/Info.plist"
+  printf '%s\n' '#!/bin/sh' > "$app/Contents/MacOS/GrokWidget"
+  chmod +x "$app/Contents/MacOS/GrokWidget"
+}
+
+exercise_swap_guards() {
+  (
+    local tmp apps live legacy backup bad saved_dest
+    tmp="$(mktemp -d "${TMPDIR:-/tmp}/grok-resign-swap.XXXXXX")"
+    cleanup_tmp() {
+      chflags -R nouchg "$tmp" 2>/dev/null || true
+      rm -rf "$tmp"
+    }
+    trap cleanup_tmp EXIT
+    LOG_FILE="$(mktemp "${TMPDIR:-/tmp}/grok-resign-self.XXXXXX")"
+    saved_dest="$DEST"
+
+    mkdir -p "$tmp/nest/src/keep" "$tmp/nest/dest/keep"
+    printf 'src\n' > "$tmp/nest/src/keep/marker"
+    if move_onto_absent_path "$tmp/nest/src" "$tmp/nest/dest"; then
+      printf 'self-test failed: move onto an existing path was allowed\n' >&2
+      exit 1
+    fi
+    if [[ ! -f "$tmp/nest/src/keep/marker" || -d "$tmp/nest/dest/src" ]]; then
+      printf 'self-test failed: move onto an existing path nested or moved the source\n' >&2
+      exit 1
+    fi
+
+    apps="$tmp/Applications"
+    mkdir -p "$apps"
+    backup="$apps/backup-app"
+    bad="$apps/GrokWidget.app"
+    make_fake_app "$backup"
+    mkdir -p "$bad/GrokWidget.app"
+    printf 'nested\n' > "$bad/GrokWidget.app/marker"
+    DEST="$bad"
+    if ! restore_verified_backup "$backup"; then
+      printf 'self-test failed: rollback did not restore a valid bundle\n' >&2
+      exit 1
+    fi
+    if [[ ! -f "$DEST/Contents/Info.plist" || ! -f "$DEST/Contents/MacOS/GrokWidget" || -d "$DEST/GrokWidget.app" ]]; then
+      printf 'self-test failed: restored bundle is nested or incomplete\n' >&2
+      exit 1
+    fi
+
+    legacy="$apps/GrokWidget.app.previous"
+    make_fake_app "$legacy"
+    printf 'live-marker\n' > "$DEST/Contents/MacOS/GrokWidget"
+    chflags uchg "$legacy" || {
+      printf 'self-test failed: could not mark the leftover backup immutable\n' >&2
+      exit 1
+    }
+    chflags uchg "$legacy/Contents/Info.plist" || true
+    if clear_legacy_previous; then
+      printf 'self-test failed: a stuck previous backup did not abort the swap\n' >&2
+      exit 1
+    fi
+    if [[ "$(cat "$DEST/Contents/MacOS/GrokWidget")" != "live-marker" ]]; then
+      printf 'self-test failed: the live bundle changed while the previous backup was stuck\n' >&2
+      exit 1
+    fi
+    if [[ -d "$legacy/GrokWidget.app" || -d "$DEST/GrokWidget.app" ]]; then
+      printf 'self-test failed: the live app was nested inside the previous backup\n' >&2
+      exit 1
+    fi
+    DEST="$saved_dest"
+    printf 'stuck-previous: live bundle kept\n'
+  )
+}
+
+simulate_stale_profile() {
+  local now same decision
+  now=1700000000
+  same="$(epoch_to_iso $((now + 86400)))"
+  decision="$(renewal_decision "$same" "$same" "$same" "$same" "$now")"
+  if [[ "$decision" != "rejected" ]]; then
+    log "stale-profile simulation failed: decision=$decision"
+    return 1
+  fi
+  log "simulated stale profile; same expiry inside 3 days was rejected; installed app was not modified"
+  printf 'stale-profile: rejected\n'
+}
+
+simulate_stuck_previous() {
+  if ! exercise_swap_guards; then
+    log "stuck-previous simulation failed; installed app was not modified"
+    return 1
+  fi
+  log "simulated stuck previous; live bundle was not nested; installed app was not modified"
 }
 
 self_test() {
@@ -835,6 +1258,23 @@ self_test() {
   expect "$(plan_for 1 1000 1000)" "rebuild warn" "expires this second"
   expect "$(plan_for 1 1000 999)" "rebuild warn" "already expired"
   expect "$(plan_for 0 0 $((6 * 24 * 60 * 60)))" "rebuild ok" "verify failed"
+
+  local fixed_now same_soon later far
+  fixed_now=1700000000
+  same_soon="$(epoch_to_iso $((fixed_now + 86400)))"
+  later="$(epoch_to_iso $((fixed_now + 86400 + 60)))"
+  far="$(epoch_to_iso $((fixed_now + 6 * 86400)))"
+  expect "$(renewal_decision "$same_soon" "$same_soon" "$same_soon" "$same_soon" "$fixed_now")" "rejected" "same expiry inside 3 days"
+  expect "$(renewal_decision "$later" "$later" "$same_soon" "$same_soon" "$fixed_now")" "renewed" "strictly later inside 3 days"
+  expect "$(renewal_decision "$later" "$same_soon" "$same_soon" "$same_soon" "$fixed_now")" "rejected" "only one side extended"
+  expect "$(renewal_decision "$same_soon" "$same_soon" "$later" "$later" "$fixed_now")" "rejected" "expiry moved backward"
+  expect "$(renewal_decision "$far" "$far" "$far" "$far" "$fixed_now")" "renewed" "same expiry past 3 days"
+  expect "$(renewal_decision "$far" "$far" "" "" "$fixed_now")" "renewed" "no installed profile past 3 days"
+  expect "$(renewal_decision "$same_soon" "$same_soon" "" "" "$fixed_now")" "rejected" "no installed profile inside 3 days"
+  if ! exercise_swap_guards; then
+    printf 'self-test failed: swap guards\n' >&2
+    exit 1
+  fi
 
   msg="$(failure_message account)"
   contains "$msg" "GrokWidget re-sign failed: open Xcode > Settings > Accounts and sign back in, then run " "failure copy"
@@ -894,6 +1334,18 @@ main() {
       notify_failure account
       exit 1
     fi
+    if [[ "$SIMULATE" == "stale-profile" ]]; then
+      if ! simulate_stale_profile; then
+        exit 1
+      fi
+      exit 0
+    fi
+    if [[ "$SIMULATE" == "stuck-previous" ]]; then
+      if ! simulate_stuck_previous; then
+        exit 1
+      fi
+      exit 0
+    fi
     local now soon iso
     now="$(date -u "+%s")"
     soon=$((now + 36 * 60 * 60))
@@ -907,6 +1359,7 @@ main() {
   if [[ "$CHECK" -eq 0 ]]; then
     acquire_lock
   fi
+  cleanup_old_backups
   recover_partial_swap
   read_installed
   log "installed=$INSTALLED verify_ok=$VERIFY_OK app_expiry=${INSTALLED_APP_EXPIRY:-missing} appex_expiry=${INSTALLED_APPEX_EXPIRY:-missing} force=$FORCE"

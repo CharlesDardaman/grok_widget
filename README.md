@@ -74,7 +74,7 @@ On a normal run the script does not build. It rebuilds the **GrokWidgetApp** Rel
 - `codesign --verify --deep --strict` fails for `/Applications/GrokWidget.app`
 - the embedded profile on the app or on `GrokUsageWidget.appex` is missing, already expired, or expires within 3 days
 
-Automatic signing uses the team in `Config/Local.xcconfig`. Xcode has to already be signed in to the Apple ID (Xcode > Settings > Accounts). The script cannot complete a sign-in prompt. After a build it checks the signature, checks that both embedded profiles expire in the future, and checks that the app group and keychain access group are still present. It quits Grok Widget, swaps the new bundle into `/Applications/GrokWidget.app`, launches it, and re-registers the widget with `pluginkit` so WidgetKit uses the new signature.
+Automatic signing uses the team in `Config/Local.xcconfig`. Xcode has to already be signed in to the Apple ID (Xcode > Settings > Accounts). The script cannot complete a sign-in prompt. After a build it checks the signature, checks that both embedded profiles expire in the future, and checks that the app group and keychain access group are still present. It installs that build only when both new expiries are strictly later than the installed ones, or more than 3 days away. If Xcode re-embeds the same soon-to-expire profile, the script deletes the cached profiles for this bundle, rebuilds once, and if the expiry still did not move it leaves `/Applications/GrokWidget.app` in place and posts the failure notification. The swap never moves the live app onto an existing backup. A rollback checks that the restored bundle is a valid app. It then launches Grok Widget and re-registers the widget with `pluginkit` so WidgetKit uses the new signature.
 
 Each run appends to `~/Library/Logs/GrokWidget/resign.log`, including the new expiry date when it installs a profile.
 
@@ -97,11 +97,13 @@ If a re-sign fails, or the installed profile expires within 48 hours and that ru
 ```bash
 ./scripts/resign.sh --force                 # rebuild now
 ./scripts/resign.sh --check                 # report only; does not modify the app
-./scripts/resign.sh --simulate-failure      # post the failure notification, do not build
-./scripts/resign.sh --simulate-expiring     # post the 48-hour notification, do not build
+./scripts/resign.sh --simulate-failure         # post the failure notification, do not build
+./scripts/resign.sh --simulate-expiring        # post the 48-hour notification, do not build
+./scripts/resign.sh --simulate-stale-profile   # reject a same-expiry rebuild, do not build
+./scripts/resign.sh --simulate-stuck-previous  # refuse to nest a stuck backup, do not build
 ```
 
-`GROK_RESIGN_SIMULATE=failure` and `GROK_RESIGN_SIMULATE=expiring` do the same thing as the simulate flags.
+`GROK_RESIGN_SIMULATE=failure`, `expiring`, `stale-profile`, and `stuck-previous` do the same thing as those flags.
 
 ## Run and add the widget
 
